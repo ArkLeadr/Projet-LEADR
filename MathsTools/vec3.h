@@ -87,6 +87,14 @@ public:
         return *this;
     }
 
+    float& operator[] (int i) {
+        return m_data[i];
+    }
+
+    const float& operator[] (int i) const {
+        return m_data[i];
+    }
+
     float norm() const {
         return sqrtf(x*x + y*y + z*z);
     }

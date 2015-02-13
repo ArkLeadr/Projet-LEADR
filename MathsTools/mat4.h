@@ -54,6 +54,10 @@ public:
         return m_data[i];
     }
 
+    const float* operator[] (int i) const {
+        return m_data[i];
+    }
+
     void identity() {
         fill(0.f);
 

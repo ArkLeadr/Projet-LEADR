@@ -17,6 +17,8 @@
 
 #include <memory>
 
+#include "leadr_tools_import.h"
+
 class Scene
 {
 public:
@@ -89,6 +91,8 @@ public:
 
     float gamma = 2.2f;
     float keyValue = 0.18f;
+
+    SphericalHarmonicsCoeffs shc;
 };
 
 #endif // SCENETORENAME_H

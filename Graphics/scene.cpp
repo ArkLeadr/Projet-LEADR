@@ -44,9 +44,9 @@ void Scene::initScene() {
 //    mainModel.loadFromFile("plan.obj");
 //    mainModel.loadFromFile("cube_and_floor.obj");
 //    mainModel.loadFromFile("Worn_Down_House/destroyed_house.obj");
-//    mainModel.loadFromFile("hi_sphere.obj");
+    mainModel.loadFromFile("hi_sphere.obj");
 //    mainModel.loadFromFile("Astroboy/astroBoy_walk_Maya.dae");
-    mainModel.loadFromFile("SimpleModel/demo.dae");
+//    mainModel.loadFromFile("SimpleModel/demo.dae");
 //    mainModel.loadFromFile("cubenorm.obj");
 
     basicLamp.loadFromFile("hi_sphere.obj");
@@ -83,6 +83,14 @@ void Scene::initScene() {
     skybox.feedCubemap(cubemap);
 
     fbo.reset(new FBO(m_width, m_height, 3));
+
+    importCoeffs("grace_probe.leadrshc", shc);
+
+    computeMatrixRepresentation(shc);
+
+    printCoeffs(shc.coeffs);
+
+    printMatricesToGlslDeclaration(shc);
 }
 
 void Scene::resize(int width, int height)
@@ -213,6 +221,10 @@ void Scene::render()
     /* FIRE! */
     s.sendTransformations(projection, camera.getView(), cubeTransformation);
     glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "lightMVP"), 1, GL_FALSE, lightMVP.data());
+
+    glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hred"), 1, GL_FALSE, shc.hred.data());
+    glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hgreen"), 1, GL_FALSE, shc.hgreen.data());
+    glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hblue"), 1, GL_FALSE, shc.hblue.data());
 
     shadowmap.bindShadowMapToTarget(GL_TEXTURE3);
 

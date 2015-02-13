@@ -103,6 +103,10 @@ const mat4 graceblue = mat4(
      0.000483,  0.030949, -0.013784,  0.051648
 ) ;
 
+uniform mat4 hred;
+uniform mat4 hgreen;
+uniform mat4 hblue;
+
 void main( void )
 {
     vec3 finalColor;
@@ -176,13 +180,13 @@ void main( void )
 
 
 
-//    normal = normalize(inData.normal);
+    normal = normalize(inData.normal);
 
-//    vec4 n = vec4(normal, 1);
+    vec4 n = vec4(normal, 1);
 
-//    float albedo = 6.5;
+    float albedo = 6.5;
 
-//    fragColor.x = dot(n, (gracered) * n) * albedo;
-//    fragColor.y = dot(n, (gracegreen) * n) * albedo;
-//    fragColor.z = dot(n, (graceblue) * n) * albedo;
+    fragColor.x = dot(n, (hred) * n) * albedo;
+    fragColor.y = dot(n, (hgreen) * n) * albedo;
+    fragColor.z = dot(n, (hblue) * n) * albedo;
 }

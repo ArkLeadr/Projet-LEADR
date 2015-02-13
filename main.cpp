@@ -11,28 +11,8 @@
 
 #include "Graphics/renderer.h"
 
-namespace Michel {
-    class Speaker {
-    public:
-        static void say() {
-            std::cerr << "Hi! I'm Michel! \n";
-        }
-    };
-}
-
-namespace Bob {
-    class Speaker {
-    public:
-        static void say() {
-            std::cerr << "Bonjour! Je suis Bob. \n";
-        }
-    };
-}
-
-namespace MainSpeaker = Michel;
-
 int main(int argc, char *argv[])
-{   
+{
     Renderer renderer(640, 480);
 
     #ifdef USE_SDL2
@@ -63,10 +43,6 @@ int main(int argc, char *argv[])
     return(app.exec());
 
     #endif
-
-    std::cerr << "Bob\n";
-
-    MainSpeaker::Speaker::say();
 
     return 0;
 }

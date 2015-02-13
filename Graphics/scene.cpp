@@ -122,6 +122,7 @@ static bool isPowerOfTwo(int val) {
     return (val > 0) && !(val & (val - 1));
 }
 
+#define ENABLE_HDR 0
 
 void Scene::render()
 {
@@ -222,6 +223,8 @@ void Scene::render()
     s.sendTransformations(projection, camera.getView(), cubeTransformation);
     glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "lightMVP"), 1, GL_FALSE, lightMVP.data());
 
+    glUniform3fv(glGetUniformLocation(s.getProgramId(), "shc_env"), 9, (float*) shc.coeffs);
+
     glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hred"), 1, GL_FALSE, shc.hred.data());
     glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hgreen"), 1, GL_FALSE, shc.hgreen.data());
     glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hblue"), 1, GL_FALSE, shc.hblue.data());
@@ -261,6 +264,8 @@ void Scene::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+#if ENABLE_HDR
+
     unsigned int closestWidth = m_width;
     unsigned int closestHeight = m_height;
 
@@ -286,7 +291,7 @@ void Scene::render()
 
     toLuminanceFbo.bindToTarget(GL_TEXTURE0);
 
-    std::cerr << "Closest width x height " << closestWidth << " x " << closestHeight << '\n';
+//    std::cerr << "Closest width x height " << closestWidth << " x " << closestHeight << '\n';
 
 //    exit(0);
 
@@ -444,7 +449,7 @@ void Scene::render()
 
         glGetTexImage(GL_TEXTURE_2D, numLevels - 1, GL_RGBA, GL_FLOAT, onePixel);
 
-        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
+//        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
 
 //        timer.glStop();
 //        std::cerr << timer.getElapsedTimeInMilliSec() << " ms.\n";
@@ -474,6 +479,14 @@ void Scene::render()
     //        shadowFbo.getTexture(0).bindToTarget(GL_TEXTURE0);
         finalScreenPass.fire();
     }
+
+#else
+    FBO::unbind();
+
+    fbo->getTexture(fboTexId).bindToTarget(GL_TEXTURE0);
+//        shadowFbo.getTexture(0).bindToTarget(GL_TEXTURE0);
+    finalScreenPass.fire();
+#endif
 
 
     Shader::unbind();

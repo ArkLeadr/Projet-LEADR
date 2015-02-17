@@ -17,7 +17,7 @@ void Scene::initScene() {
     s.addFragmentShader("simple.frag");
     s.addTessControlShader("simple_tesc.glsl");
     s.addTessEvaluationShader("simple_tese.glsl");
-    s.addGeometryShader("simple.geom");
+    //s.addGeometryShader("simple.geom");
     s.link();
 
 
@@ -233,8 +233,11 @@ void Scene::render()
 
     fbo->bind();
 
+    if(wireframe)
+        glPolygonMode(GL_BACK, GL_LINE);
     mainModel.drawAsPatch(projection, camera.getView(), cubeTransformation, &s);
-
+    if(wireframe)
+        glPolygonMode(GL_BACK, GL_FILL);
     Shader::unbind();
 
 

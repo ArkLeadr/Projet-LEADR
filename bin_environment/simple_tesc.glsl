@@ -105,7 +105,7 @@ struct outputPatch
 
  float GetTessLevel(float Distance0, float Distance1)
  {
-     float c = 5;
+     float c = 20octa;
      float sum = 0;
      vec3 t[10];
      t[0] = oPatch.worldPos_B030;
@@ -151,15 +151,16 @@ void main(void)
      float dist2 = (1 -abs( (inData[2].normal * (eyePosition - inData[2].pos))/abs(eyePosition - inData[2].pos)))*(10/zoom);
 */
      // Calculate the tessellation levels
-//     gl_TessLevelOuter[0] = GetTessLevel(dist1, dist2);
-//     gl_TessLevelOuter[1] = GetTessLevel(dist2, dist0);
-//     gl_TessLevelOuter[2] = GetTessLevel(dist0, dist1);
-//     gl_TessLevelInner[0] = gl_TessLevelOuter[2];
-    float lvl = 1;
+     gl_TessLevelOuter[0] = GetTessLevel(dist1, dist2);
+     gl_TessLevelOuter[1] = GetTessLevel(dist2, dist0);
+     gl_TessLevelOuter[2] = GetTessLevel(dist0, dist1);
+     gl_TessLevelInner[0] = gl_TessLevelOuter[2];
+   /* float lvl = 10;
 
      gl_TessLevelOuter[0] = lvl;
      gl_TessLevelOuter[1] = lvl;
      gl_TessLevelOuter[2] = lvl;
      gl_TessLevelInner[0] = gl_TessLevelOuter[2];
+     */
 }
 

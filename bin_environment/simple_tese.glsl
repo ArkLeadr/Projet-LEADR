@@ -2,18 +2,13 @@
 
 layout(triangles, equal_spacing, cw) in;
 
-in Data {
-    vec3 normal;
-    vec2 texcoord;
-    vec3 tangent;
-} inData[];
-
 out Data {
     vec3 normal;
     vec2 texcoord;
     vec3 tangent;
 
     vec3 position;
+
 } outData;
 
 //in vec3 teNormal[];
@@ -21,6 +16,9 @@ out Data {
 
 //out vec3 fNormal;
 //out vec2 fTexcoord;
+
+
+
 
 // Uniform
 
@@ -31,35 +29,73 @@ uniform sampler2D dispMapSampler;
 
 uniform float userDisplacementFactor;
 
+
+
+struct outputPatch
+{
+    vec3 worldPos_B030;
+    vec3 worldPos_B021;
+    vec3 worldPos_B012;
+    vec3 worldPos_B003;
+    vec3 worldPos_B102;
+    vec3 worldPos_B201;
+    vec3 worldPos_B300;
+    vec3 worldPos_B210;
+    vec3 worldPos_B120;
+    vec3 worldPos_B111;
+    vec3 normal[3];
+    vec3 tangent[3];
+    vec2 texCoord[3];
+};
+
+
+in patch outputPatch oPatch;
+
+
+vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2)
+{
+    return vec2(gl_TessCoord.x) * v0 + vec2(gl_TessCoord.y) * v1 + vec2(gl_TessCoord.z) * v2;
+}
+
+vec3 interpolate3D(vec3 v0, vec3 v1, vec3 v2)
+{
+    return vec3(gl_TessCoord.x) * v0 + vec3(gl_TessCoord.y) * v1 + vec3(gl_TessCoord.z) * v2;
+}
+
 void main()
 {
-        gl_Position.xyzw =  gl_in[0].gl_Position.xyzw * gl_TessCoord.x +
-                            gl_in[1].gl_Position.xyzw * gl_TessCoord.y +
-                            gl_in[2].gl_Position.xyzw * gl_TessCoord.z;
+    // Interpolate the attributes of the output vertex using the barycentric coordinates
+    outData.texcoord = interpolate2D(oPatch.texCoord[0], oPatch.texCoord[1], oPatch.texCoord[2]);
+    outData.normal = interpolate3D(oPatch.normal[0], oPatch.normal[1], oPatch.normal[2]);
+    outData.tangent = interpolate3D(oPatch.tangent[0], oPatch.tangent[1], oPatch.tangent[2]);
 
-        outData.normal = inData[0].normal * gl_TessCoord.x + inData[1].normal * gl_TessCoord.y + inData[2].normal * gl_TessCoord.z;
-        outData.texcoord = inData[0].texcoord * gl_TessCoord.x + inData[1].texcoord * gl_TessCoord.y + inData[2].texcoord * gl_TessCoord.z;
-        outData.tangent = inData[0].tangent * gl_TessCoord.x + inData[1].tangent * gl_TessCoord.y + inData[2].tangent * gl_TessCoord.z;
+    float u = gl_TessCoord.x;
+    float v = gl_TessCoord.y;
+    float w = gl_TessCoord.z;
 
-//        fNormal = teNormal[0] * gl_TessCoord.x + teNormal[1] * gl_TessCoord.y + teNormal[2] * gl_TessCoord.z;
-//        fTexcoord = teTexcoord[0] * gl_TessCoord.x + teTexcoord[1] * gl_TessCoord.y + teTexcoord[2] * gl_TessCoord.z;
+    float uPow3 = u*u*u;
+    float vPow3 = v*v*v;
+    float wPow3 = w*w*w;
+    float uPow2 = u*u;
+    float vPow2 = v*v;
+    float wPow2 = w*w;
 
-        vec3 rgb_disp = texture(dispMapSampler, outData.texcoord).xyz;
+    outData.position =
+            oPatch.worldPos_B300 * wPow3 +
+            oPatch.worldPos_B030 * uPow3 +
+            oPatch.worldPos_B003 * vPow3 +
+            oPatch.worldPos_B210 * 3.0 * wPow2 * u +
+            oPatch.worldPos_B120 * 3.0 * w * uPow2 +
+            oPatch.worldPos_B201 * 3.0 * wPow2 * v +
+            oPatch.worldPos_B021 * 3.0 * uPow2 * v +
+            oPatch.worldPos_B102 * 3.0 * w * vPow2 +
+            oPatch.worldPos_B012 * 3.0 * u * vPow2 +
+            oPatch.worldPos_B111 * 6.0 * w * u * v;
 
-        float disp_factor = 0.30*rgb_disp.x + 0.59*rgb_disp.y + 0.11*rgb_disp.z;
-
-        gl_Position.xyz = gl_Position.xyz + normalize(outData.normal)*disp_factor*userDisplacementFactor;
-
-
-        /* Wow, such sphere */
-//        gl_Position.xyz = 3*normalize(gl_Position.xyz);
-
-        outData.normal = normalize((world * vec4(normalize(outData.normal), 0)).xyz);
-        outData.tangent = normalize((world * vec4(normalize(outData.tangent), 0)).xyz);
-        outData.position = (world * vec4(gl_Position.xyz, 1)).xyz;
-
-        gl_Position = MVP * gl_Position;
-
-
-
+    gl_Position = MVP * vec4(outData.position, 1.0);
 }
+
+
+
+
+

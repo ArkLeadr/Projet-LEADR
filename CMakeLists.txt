@@ -13,6 +13,8 @@ include_directories(.)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
+SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 IF (MSVC)
 
 ELSE(MSVC)

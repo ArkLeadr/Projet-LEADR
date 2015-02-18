@@ -126,3 +126,95 @@ void printMatricesToGlslDeclaration(const SphericalHarmonicsCoeffs& shc) {
     }
     printf(") ;\n");
 }
+
+class Proxy {
+    int w;
+    int h;
+
+    vec4* p;
+
+public:
+
+    Proxy(int w, int h, vec4* p) : w(w), h(h), p(p) {}
+
+    vec4& operator() (int i, int j) {
+        i = i - 1;
+        j = j - 1;
+
+        return p[i * w + j];
+    }
+};
+
+#define approx(val, target, delta) ((val <= target + delta) && (val >= target - delta))
+
+bool importSingleLeadrTexture(const char *filename, Texture& leadr) {
+    FILE* fp = NULL;
+
+    fp = fopen(filename, "rb");
+
+    if (!fp) {
+        std::cerr << "Error opening file " << filename << '\n';
+
+        return false;
+    }
+
+//    printf("Loading leadr texture : %s \n", filename);
+
+//    float ten[10] = {0};
+
+//    fread((void*) &ten, sizeof(float), 10, fp);
+
+//    for (int i = 0; i < 10; ++i) {
+//        std::cout << ten[i] << '\n';
+//    }
+
+//    exit(0);
+
+    int width, height;
+
+    fread((void*) &width, sizeof(int), 1, fp);
+    fread((void*) &height, sizeof(int), 1, fp);
+
+    size_t size = width * height;
+
+    float* pixelData = new float[size*4];
+
+    fread((void*) pixelData, sizeof(float), size*4, fp);
+
+    Proxy proxy(width, height, (vec4*) pixelData);
+
+    std::cout << "Width : " << width << ", Height : " << height << '\n';
+
+    std::cout << '\n';
+
+
+
+    if (std::string(filename) == "tex1") {
+        for (int i = 1; i <= 512; ++i)
+        for (int j = 1; j <= 512; ++j)
+        {
+//            std::cout <<  << '\n';
+
+            assert(approx(proxy(i, j).w  - proxy(i, j).x*proxy(i, j).x, 0, 0.00001));
+//            std::cout << proxy(1, i).z - proxy(1, i).x*proxy(1, i).x << '\n';
+        }
+    }
+
+//    exit(0);
+
+    fclose(fp);
+
+    leadr.loadFromBlob(width, height, GL_RGBA32F, GL_RGBA, GL_FLOAT, pixelData);
+
+    delete pixelData;
+
+    return true;
+}
+
+
+bool importLeadrTextures(const char *filename1, const char *filename2, Texture &leadr1, Texture &leadr2) {
+    importSingleLeadrTexture(filename1, leadr1);
+    importSingleLeadrTexture(filename2, leadr2);
+
+    return true;
+}

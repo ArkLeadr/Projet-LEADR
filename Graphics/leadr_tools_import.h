@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <iostream>
 
+#include "Graphics/texture.h"
+
 typedef Color3f SimpleShc[9];
 
 struct SphericalHarmonicsCoeffs {
@@ -27,6 +29,8 @@ void printCoeffs(const SimpleShc coeffs);
 
 void printMatricesToGlslDeclaration(const SphericalHarmonicsCoeffs& shc);
 
+
+bool importLeadrTextures(const char* filename1, const char* filename2, Texture& leadr1, Texture& leadr2);
 
 
 

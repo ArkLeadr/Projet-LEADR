@@ -8,7 +8,8 @@ Scene::Scene(int width, int height) :
     reducePass(m_width, m_height, "reduce.frag"),
     finalScreenPass(m_width, m_height, "quadFbo.frag"),
     toLuminancePass(m_width, m_height, "toLuminance.frag"),
-    tonemapPass(m_width, m_height, "tonemap.frag")
+    tonemapPass(m_width, m_height, "tonemap.frag"),
+    leadrScreenpass(m_width, m_height)
 {
 }
 
@@ -17,7 +18,6 @@ void Scene::initScene() {
     s.addFragmentShader("simple.frag");
     s.addTessControlShader("simple_tesc.glsl");
     s.addTessEvaluationShader("simple_tese.glsl");
-    s.addGeometryShader("simple.geom");
     s.link();
 
 
@@ -27,6 +27,8 @@ void Scene::initScene() {
     renewableShadersList.push_back(&(toLuminancePass.getShader()));
     renewableShadersList.push_back(&(tonemapPass.getShader()));
     renewableShadersList.push_back(&(skybox.getShader()));
+
+    renewableShadersList.push_back(&(leadrScreenpass.getShader()));
 
 
 //    quadFboShader.addFragmentShader("quadFbo.frag");
@@ -41,10 +43,10 @@ void Scene::initScene() {
     camera.setProperties(vec3{0.f, 0.f, -1.f}, vec3{0.f, 0.f, 1.f}, vec3{0.f, 1.f, 0.f});
 
 //    mainModel.loadBasicType(Model::BasicType::PLAN);
-//    mainModel.loadFromFile("plan.obj");
+    mainModel.loadFromFile("plan.obj");
 //    mainModel.loadFromFile("cube_and_floor.obj");
 //    mainModel.loadFromFile("Worn_Down_House/destroyed_house.obj");
-    mainModel.loadFromFile("hi_sphere.obj");
+//    mainModel.loadFromFile("hi_sphere.obj");
 //    mainModel.loadFromFile("Astroboy/astroBoy_walk_Maya.dae");
 //    mainModel.loadFromFile("SimpleModel/demo.dae");
 //    mainModel.loadFromFile("cubenorm.obj");
@@ -62,8 +64,12 @@ void Scene::initScene() {
 //    normalMap.loadFromFile("roundstones_norm.jpg");// EXAMPLE
     normalMap.loadFromFile("disp_data/wall002_nmap2_512x512.jpg");
 
+    mainModel.overrideNormalTexture(normalMap);
+
 //    dogeMap.loadFromFile("basic_displacement_map.png");
     dogeMap.loadFromFile("disp_data/wall002_hmap2_512x512.jpg");
+
+//    dogeMap.loadFromMaterialColor(Color3f{0, 0, 0});
 
 
     cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_X, "Ryfjallet_512/posx.jpg");
@@ -88,9 +94,14 @@ void Scene::initScene() {
 
     computeMatrixRepresentation(shc);
 
-    printCoeffs(shc.coeffs);
+//    printCoeffs(shc.coeffs);
 
-    printMatricesToGlslDeclaration(shc);
+//    printMatricesToGlslDeclaration(shc);
+
+//    importLeadrTextures("tex1", "tex2", leadr1, leadr2);
+    importLeadrTextures("C:\\Users\\Robin\\Desktop\\LEADR\\GenTexLEADR\\GenTexLEADR\\build\\wall002_hmap2_512x512.leadr1",
+                        "C:\\Users\\Robin\\Desktop\\LEADR\\GenTexLEADR\\GenTexLEADR\\build\\wall002_hmap2_512x512.leadr2",
+                        leadr1, leadr2);
 }
 
 void Scene::resize(int width, int height)
@@ -107,6 +118,8 @@ void Scene::resize(int width, int height)
     toLuminancePass.resize(width, height);
 
     tonemapPass.resize(width, height);
+
+    leadrScreenpass.resize(width, height);
 
     std::cerr << "FBO shall be: " << width << " " << height << '\n';
 }
@@ -180,6 +193,12 @@ void Scene::render()
     glUniform1i(glGetUniformLocation(s.getProgramId(), "shadowMapSampler"), 3);
 //        texture.bindToTarget(GL_TEXTURE0);
     dogeMap.bindToTarget(GL_TEXTURE2);
+
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "leadr1"), 4);
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "leadr2"), 5);
+
+    leadr1.bindToTarget(GL_TEXTURE4);
+    leadr2.bindToTarget(GL_TEXTURE5);
 
     glUniform1i(glGetUniformLocation(s.getProgramId(), "cubeMapSampler"), 0);
     glActiveTexture(GL_TEXTURE0);
@@ -488,6 +507,51 @@ void Scene::render()
     finalScreenPass.fire();
 #endif
 
+
+    Shader::unbind();
+}
+
+void Scene::renderLeadrQuadOnly()
+{
+    fbo->bind();
+
+    GLuint attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    glDrawBuffers(3,  attachments);
+
+
+    glClearColor(0.f, 0.f, 0.f, 0); // BLACK
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    Shader& leadr_s = leadrScreenpass.getShader();
+
+    /* Bind a shader */
+    leadr_s.use();
+
+    glUniform1i(glGetUniformLocation(leadr_s.getProgramId(), "leadr1"), 4);
+    glUniform1i(glGetUniformLocation(leadr_s.getProgramId(), "leadr2"), 5);
+    leadr1.bindToTarget(GL_TEXTURE4);
+    leadr2.bindToTarget(GL_TEXTURE5);
+
+
+    fbo->bind();
+
+    leadrScreenpass.fire();
+
+//    mainModel.drawAsPatch(projection, camera.getView(), cubeTransformation, &s);
+
+    Shader::unbind();
+
+
+    FBO::unbind();
+
+    glClearColor(0.f, 0.f, 0.f, 0); // BLACK
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    fbo->getTexture(fboTexId).bindToTarget(GL_TEXTURE0);
+
+    finalScreenPass.fire();
 
     Shader::unbind();
 }

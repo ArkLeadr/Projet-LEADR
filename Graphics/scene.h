@@ -32,6 +32,9 @@ public:
 
     void reloadShaders();
 
+
+    void renderLeadrQuadOnly();
+
 public:
     int m_width;
     int m_height;
@@ -93,6 +96,11 @@ public:
     float keyValue = 0.18f;
 
     SphericalHarmonicsCoeffs shc;
+
+    Texture leadr1;
+    Texture leadr2;
+
+    LEADR_screenpass leadrScreenpass;
 };
 
 #endif // SCENETORENAME_H

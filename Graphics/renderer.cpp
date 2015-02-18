@@ -236,6 +236,7 @@ void Renderer::render()
 
 //    timer.start();
 
+//    m_scene->renderLeadrQuadOnly();
     m_scene->render();
 
 //    timer.stop();

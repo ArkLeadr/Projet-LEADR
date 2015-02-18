@@ -19,24 +19,7 @@ arkOpenGLWidget::arkOpenGLWidget( QGLFormat format, arkAbstractMediatorShPtr med
 QGLWidget( format ),
 arkMediatorWidget( mediator_shptr )
 {
-        QGLFormat fmt;
-        fmt.setDoubleBuffer(true);
-        fmt.setDirectRendering(true);
-        fmt.setRgba(true);
-        fmt.setStencil(false);
-        fmt.setDepth(true);
-        fmt.setAlpha(false);
-        fmt.setVersion(4, 0);
-        fmt.setProfile(QGLFormat::CoreProfile);
-        QGLFormat::setDefaultFormat(fmt);
-
-        if (!(QGLFormat::openGLVersionFlags() & QGLFormat::OpenGL_Version_4_0)) {
-            std::cerr << "Failed to create a valid Core Opengl 4.4 Profile. \n";
-            exit(EXIT_FAILURE);
-        }
-
         setFocusPolicy(Qt::StrongFocus);
-        makeCurrent();
 }
 
 arkOpenGLWidget::~arkOpenGLWidget()

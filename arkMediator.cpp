@@ -87,6 +87,12 @@ void arkMediator::setNormalMode( bool normal_mode )
     m_renderer->setNormalMode( normal_mode );
 }
 
+void arkMediator::reloadShader()
+{
+    m_renderer->reloadShader();
+}
+
+
 void arkMediator::initializeGL()
 {
     m_renderer->initializeGL();

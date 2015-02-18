@@ -40,7 +40,8 @@ class arkMediator : public arkAbstractMediator
     
     virtual void setLEADRMode( bool leadr_mode );
     virtual void setNormalMode( bool normal_mode );
-    
+    virtual void reloadShader();
+
     virtual void initializeGL();
     virtual void resizeGL( int width, int height );
     virtual void paintGL();

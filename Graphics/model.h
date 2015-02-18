@@ -63,6 +63,8 @@ public:
     void drawAsPatch(const mat4& projection, const mat4& view, const mat4& model, Shader* s = nullptr);
 
     void handleNode(aiNode* ainode, const aiMatrix4x4& accumulatedTransformation = aiMatrix4x4(), int level = 0);
+
+    void overrideNormalTexture(Texture &tex);
 };
 
 #endif // MODEL_H

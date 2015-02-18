@@ -104,3 +104,7 @@ bool Material::loadFromAssimpMaterial(const aiMaterial *mat, std::string matBase
 
     return true;
 }
+
+void Material::overrideNormalTexture(Texture& tex) {
+    m_normalTexture = tex;
+}

@@ -34,6 +34,7 @@ public:
     GLuint getId() const {
         return m_tex;
     }
+    bool loadFromBlob(int width, int height, GLuint internalFormat, GLuint format, GLuint dataType, void *pixelData);
 };
 
 #endif // TEXTURE_H

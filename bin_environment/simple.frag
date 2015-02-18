@@ -7,6 +7,8 @@ uniform samplerCube cubeMapSampler;
 
 uniform sampler2DShadow shadowMapSampler;
 
+uniform sampler2D dispMapSampler;
+
 uniform mat4 lightMVP;
 
 in Data {
@@ -49,20 +51,46 @@ uniform float shininess;
 //vec3 ks = vec3(1, 1, 1);
 //float shininess = 64;
 
+vec3 V;
+
+vec3 B;
+vec3 T;
+vec3 N;
+
+const int numLights = 1;
 
 layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec4 normalColor;
 layout(location = 2) out vec4 texcoordColor;
 
-vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 color, vec3 normal) {
-    float Id = clamp(dot(normal, lightDir), 0, 1);
+#define approx(val, target, delta) ( (val <= (target + delta) ) && (val >= (target - delta) ) )
 
-    vec3 viewDir = normalize(eyePosition - inData.position);
-    vec3 halfV = normalize(lightDir + viewDir);
+bool vec_approx(vec3 v, vec3 target, float delta) {
+    return (approx(v.x, target.x, delta) && approx(v.y, target.y, delta) && approx(v.z, target.z, delta));
+}
+
+
+vec3 toTanSpace(vec3 v) {
+    return normalize(vec3(dot(v, T), dot(v, B), dot(v, N)));
+}
+
+vec3 fromTanSpace(vec3 v) {
+    return normalize(mat3(T, B, N) * v);
+}
+
+vec3 fresnel_schlick(vec3 f0, float LdotH) {
+    return f0 + (1 - f0) * pow(1 - LdotH, 5);
+}
+
+
+vec3 blinn_phong_calc_internal(vec3 L, vec3 color, vec3 N) {
+    float Id = clamp(dot(N, L), 0, 1);
+
+    vec3 H = normalize(L + V);
 
     float Is = 0;
     if (Id > 0) {
-        Is = pow(clamp(dot(normal, halfV), 0, 1), shininess);
+        Is = pow(clamp(dot(N, H), 0, 1), shininess);
     }
 
     // Replace the 3 colors by light ambiant, diffuse and specular intensity respectively
@@ -70,46 +98,251 @@ vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 color, vec3 normal) {
     return (ka*color*tmpAmbientFactor + texture(texSampler, inData.texcoord).xyz*Id*color + ks*Is*color);
 }
 
-vec3 blinn_phong_calc(DirLight light, vec3 normal) {
-    vec3 lightDir = normalize(-light.direction);
+vec3 blinn_phong_calc(DirLight light, vec3 N) {
+    vec3 L = normalize(-light.direction);
 
-    return blinn_phong_calc_internal(lightDir, light.color, normal);
+    return blinn_phong_calc_internal(L, light.color, N);
 }
 
-vec3 blinn_phong_calc(PointLight light, vec3 normal) {
-    vec3 lightDir = normalize(light.position - eyePosition);
+vec3 blinn_phong_calc(PointLight light, vec3 N) {
+    vec3 L = normalize(light.position - inData.position);
 
-    return blinn_phong_calc_internal(lightDir, light.color, normal);
+    return blinn_phong_calc_internal(L, light.color, N);
 }
 
-const mat4 gracered = mat4(
-     0.009098, -0.004780,  0.024033, -0.014947,
-    -0.004780, -0.009098, -0.011258,  0.020210,
-     0.024033, -0.011258, -0.011570, -0.017383,
-    -0.014947,  0.020210, -0.017383,  0.073787
-) ;
+/* LEADR SPECIFIC */
 
-const mat4 gracegreen = mat4(
-    -0.002331, -0.002184,  0.009201, -0.002846,
-    -0.002184,  0.002331, -0.009611,  0.017903,
-     0.009201, -0.009611, -0.007038, -0.009331,
-    -0.002846,  0.017903, -0.009331,  0.041083
-) ;
+// 2 GL_RGBA16F textures (becomes float vec4 here)
+uniform sampler2D leadr1; //~x, ~y, ~x*~y, ~x²
+uniform sampler2D leadr2; //~y², h
 
-const mat4 graceblue = mat4(
-    -0.013032, -0.005248,  0.005970,  0.000483,
-    -0.005248,  0.013032, -0.020370,  0.030949,
-     0.005970, -0.020370, -0.010948, -0.013784,
-     0.000483,  0.030949, -0.013784,  0.051648
-) ;
+float E_xn = 0;
+float E_yn = 0;
+float E_xnyn = 0;
+float E_xn2 = 0;
+
+float E_yn2 = 0;
+
+float disp = 0;
+
+float var_x = 0;
+float var_y = 0;
+float c_xy = 0;
+
+
+//vec4 mean1 = textureLod(leadr1, inData.texcoord, 4096); // 4096 should be clamped to the max mip level
+//vec4 mean2 = textureLod(leadr2, inData.texcoord, 4096); // giving us then the total mean
+
+//END JUNK
+
+/* Traitement LEADR */
+void computeLeadrStatistics()
+{
+//    float fakeLod = 1;
+
+//    vec4 stats1 = textureLod(leadr1, inData.texcoord, fakeLod);
+//    vec4 stats2 = textureLod(leadr2, inData.texcoord, fakeLod);
+
+    vec4 stats1 = texture(leadr1, inData.texcoord);
+    vec4 stats2 = texture(leadr2, inData.texcoord);
+
+    float baseRoughnessOffset = 0;
+
+    E_xn    = stats1.x;
+    E_yn    = stats1.y;
+    E_xnyn  = stats1.z;
+    E_xn2   = stats1.w;
+
+    E_yn2   = stats2.x;
+
+    disp    = stats2.y;
+
+    var_x = E_xn2 - E_xn*E_xn  + baseRoughnessOffset;
+
+    var_y = E_yn2 - E_yn*E_yn  + baseRoughnessOffset;
+
+    c_xy = E_xnyn - E_xn*E_yn;
+
+}
+
+vec3 getMesoTan() {
+    return normalize(vec3(-E_xn, -E_yn, 1));
+}
+
+vec3 getMesoWorld() {
+    return normalize(-E_xn*T - E_yn*B + N);
+}
+
+float P22(float x, float y)
+{
+    x -= E_xn;
+    y -= E_yn;
+
+    float det = var_x * var_y - c_xy * c_xy ;
+
+//    return exp(88.73);
+
+    if (approx(det, 0, 0.0000000000001)) // "Dirac if plane"
+    {
+//        return float((x == 0) && (y == 0));
+
+        return float(approx(x, 0, 0.0001) && approx(y, 0, 0.0001));
+    }
+
+//    return det + 0.1;
+
+    float arg_exp = -0.5 * ( x * x * var_y + y * y * var_x - 2.0* x * y * c_xy ) / det ;
+
+//    return arg_exp;
+
+//    float val = arg_exp;
+
+//    return exp( arg_exp - 3000000000000000000.0);
+
+    float P22_ = 0.15915 * inversesqrt ( abs(det) ) * exp ( arg_exp );
+
+    return float(P22_ > 1);
+}
+
+float D_beckmann(vec3 n) {
+    float x = -n.x / n.z;
+    float y = -n.y / n.z;
+
+    float P22_ = P22(x, y);
+
+    float D_ = P22_ / (n.z * n.z * n.z * n.z); // Here, n.z is the same as dot(wn, wg) given in the formula
+
+//    return (approx(n.z, dot(n, toTanSpace(N)), 0) ? 1 : 0); WORKS ! PROOF
+
+//    return float(isnan(P22_) || isinf(P22_));
+
+//    return P22_;
+
+    return D_;
+}
+
+float D_dirac(vec3 n) {
+    return (vec_approx(n, vec3(0, 0, 1), 0.01) ? 1 : 0);
+//    return (n == vec3(0, 0, 1) ? 1 : 0);
+}
+
+float D_cos(vec3 n) {
+    vec3 mesoTan = getMesoTan();
+
+    return max(0.0, dot(n, mesoTan));
+}
+
+float smith(vec3 v) {
+    vec2 v_xy = normalize(vec2(dot(v, T), dot(v, B)));
+
+    float mu_phi = v_xy.x * E_xn + v_xy.y * E_yn;
+    float var_phi = v_xy.x * v_xy.x * var_x + v_xy.y * v_xy.y * var_y + 2.0* v_xy.x * v_xy.y * c_xy ;
+
+    float cos_theta_v = dot(v , N);
+
+    float cot_theta_v = cos_theta_v / sqrt(1.0 - cos_theta_v * cos_theta_v);
+
+    float nu_v = clamp((cot_theta_v - mu_phi) * inversesqrt(2.0 * var_phi), 0.001, 1.599);
+
+    float Lambda_ = (1.0 -1.259 * nu_v + 0.396 * nu_v * nu_v) / (3.535 * nu_v + 2.181 * nu_v * nu_v);
+
+    return Lambda_ ;
+}
+
+
+float roughSpecularPointLight(vec3 L) {
+
+    vec3 H = normalize(L + V);
+
+    vec3 Htan = toTanSpace(H);
+    vec3 Ltan = toTanSpace(L);
+    if ( Htan.z <= 0.0) return 0.0;
+
+    float d = D_beckmann(Htan);
+
+    float lambda_V = smith((V)) * 1;
+    float lambda_L = smith((L)) * 1;
+
+    float masking_shadowing_terms = 1 / (1 + lambda_V + lambda_V);
+
+    float inverse_projected_area = 1 / dot(getMesoWorld(), V);
+
+//    float I = 0.25 * inverse_projected_area * d * masking_shadowing_terms;
+
+    float I = d;
+
+    return I;
+
+
+    return I + 10000;
+}
+
+
+const int nbSamples = 5;
+const float sampleLength = 0.9;
+
+const float p[5] = float[5](-1.8, -0.9, 0, 0.9, 1.8);
+const float w[5] = float[5](0.0725, 0.2443, 0.3663, 0.2443, 0.0725);
+
+/* TODO : see how to integrate Fresnel + smith terms in this equation */
+vec3 roughSpecularCubeMap() {
+    float sigma_x = sqrt(var_x);
+    float sigma_y = sqrt(var_y);
+
+    float r_xy = 1;
+
+    if (sigma_x*sigma_y != 0)
+        r_xy = c_xy / (sigma_x*sigma_y);
+
+    float sq_one_minus_r_xy2 = sqrt(1 - r_xy*r_xy);
+
+//    float LODoffset = -1.48 + log2(sampleLength*max(sigma_x, sigma_y)* float(textureSize(cubeMapSampler, 0).x));
+
+    // Replace -1.48 by 0.5 as said in the supplemental
+    float LODoffset = 0.5 + log2(sampleLength*max(sigma_x, sigma_y)* float(textureSize(cubeMapSampler, 0).x));
+
+    float S = 0;
+    vec3 I = vec3(0);
+
+
+    for (int j = 0; j < nbSamples; ++j) {
+        for (int k = 0; k < nbSamples; ++k) {
+            float x = p[j]*sigma_x + E_xn;
+            float y = (r_xy*p[j] + sq_one_minus_r_xy2*p[k]) * sigma_y + E_yn;
+
+
+            // microfacet normal
+            vec3 meso = getMesoWorld();
+
+            // microfacet projected area
+            float dotVN = max(0.0, dot(V, meso));
+            float dotZN = dot(N, meso);
+            float S_ = dotVN / dotZN;
+
+            // reflected vector
+            vec3 R = reflect(-V, meso);
+
+            // Jacobian : slope space area to solid angle
+            float J = abs(4.0 * dotZN*dotZN*dotZN * dotVN);
+
+            // LOD in cube map
+            float LOD = 0.72*log(J) + LODoffset ;
+            // radiance
+            vec3 I_ = textureLod(cubeMapSampler, R, LOD).rgb;
+            // sum up
+            S += w[j]*w[k] * S_ ;
+            I += w[j]*w[k] * S_ * I_ ;
+        }
+    }
+
+    return I / S;
+}
 
 uniform mat4 hred;
 uniform mat4 hgreen;
 uniform mat4 hblue;
 
 uniform vec3 shc_env[9];
-
-const int numLights = 1;
 
 #define L00     0
 #define L1_1    1
@@ -181,14 +414,6 @@ void algo2()
     }
 }
 
-/*
-E(ωn ) = 0.429043L22 (x2 − yn ) + 0.743125L20 zn
-n
-+ 0.886227L00 − 0.247708L20
-+ 0.858086(L2−2 xn yn + L21 xn zn + L2−1 yn zn )
-+ 1.023328(L11 xn + L1−1 yn + L10 zn ).
-*/
-
 /* E(wn) */
 vec3 E(vec3 n) {
     float xn = n.x;
@@ -204,7 +429,7 @@ vec3 E(vec3 n) {
             ;
 }
 
-vec3 Emat(vec3 n) {
+vec3 E_mat(vec3 n) {
     vec3 ret;
 
     vec4 v = vec4(n, 1);
@@ -216,9 +441,28 @@ vec3 Emat(vec3 n) {
     return ret;
 }
 
+/* LEADR SPECIFIC END */
+
+vec3 dumbTest(vec3 self) {
+//    return fromTanSpace((getMesoTan()));
+
+//    return (E_yn < 0 ? vec3(E_yn) : vec3(1, 0, 0));
+
+//    return vec3(float(c_xy > 10));
+
+//    return vec3(D_beckmann(vec3(0.0, 0.0, 1.0)));
+
+    return self;
+}
+
 
 void main( void )
 {
+    V = normalize(eyePosition - inData.position); // Initialize global V (view vector) for all further uses
+
+
+    computeLeadrStatistics();
+
     vec3 finalColor;
 
     vec3 normal = 2.0 * texture(normalMapSampler, inData.texcoord).xyz - vec3(1.0, 1.0, 1.0);
@@ -228,6 +472,10 @@ void main( void )
     vec3 worldNormal = normalize(inData.normal);
     vec3 worldTangent = normalize(inData.tangent);
     vec3 worldBitangent = normalize(cross(worldNormal, worldTangent));
+
+    N = worldNormal;
+    T = worldTangent;
+    B = worldBitangent;
 
     normal = normalize(mat3(worldTangent, worldBitangent, worldNormal) * normal);
 
@@ -239,9 +487,11 @@ void main( void )
 //        discard;
 //    }
 
-//    normal = normalize(inData.normal);
+    normal = normalize(inData.normal);
 
-    finalColor = texture(texSampler, inData.texcoord).xyz;
+    vec3 texAlbedo = texture(texSampler, inData.texcoord).xyz;
+
+//    finalColor = texture(texSampler, inData.texcoord).xyz;
 
 //    finalColor = texture(cubeMapSampler, reflect(normalize(eyePosition - inData.position), normal)).xyz;
 
@@ -249,19 +499,7 @@ void main( void )
 
     fragColor = vec4( /*finalColor **/ Cfinal, 1.0 );
 
-
-    /* DEBUG OUTPUT */
-    /* WIREFRAME FAIT MAISON */
-    if (wireframe) {
-        float threshold = 0.01;
-        if(inData.color.x >= threshold && inData.color.y >= threshold && inData.color.z >= threshold) {
-            discard;
-        }
-        else {
-    //        fragColor = vec4( inData.color, 1.0 );
-        }
-    }
-
+#if ENABLED_SHADOWING
     vec4 lightSpaceFragPosition = lightMVP * vec4(inData.position, 1);
 
     vec3 projCoords = lightSpaceFragPosition.xyz / lightSpaceFragPosition.w;
@@ -281,20 +519,52 @@ void main( void )
     shadowFactor = depth;
 
     fragColor = fragColor * shadowFactor;
+#endif
 
-
-//    fragColor = texture(cubeMapSampler, reflect(-normalize(eyePosition - inData.position), normal));
+//    fragColor = texture(cubeMapSampler, reflect(-V, normal));
 
     normalColor = vec4(normal, 1);
     texcoordColor = vec4(inData.texcoord, 0, 1);
 
+    vec3 pointL = normalize(pointLight.position - inData.position);
 
+    vec3 pointH = normalize(pointL + V);
 
-    normal = normalize(inData.normal);
+//    pointL = normalize(vec3(1, 0, 0));
 
-    algo2();
+    vec3 H = normalize(pointL + V);
 
-    float albedo = 6.5;
+    vec3 Htan = toTanSpace(H);
 
-    fragColor.xyz = E(normal) * albedo;
+//    fragColor.xyz = vec3(roughSpecularPointLight(pointL)); // WARNING ! NaN detected here :(
+
+    fragColor.xyz = roughSpecularCubeMap();
+
+    vec3 mesoN = normalize(-E_xn*T - E_yn*B + N);
+
+//    fragColor.xyz = blinn_phong_calc(pointLight, mesoN);
+
+//    fragColor.xyz = texture(leadr2, inData.texcoord).yyy;
+
+//    float val = textureLod(leadr2, inData.texcoord, 4096).y;
+
+    fragColor.xyz = vec3(D_beckmann(toTanSpace(H)));
+
+//    fragColor.xyz = texture(dispMapSampler, inData.texcoord).yyy;
+
+//    fragColor.xyz = vec3(V.z);
+
+//    normal = normalize(inData.normal);
+
+//    algo2();
+
+//    float albedo = 6.5;
+
+//    fragColor.xyz = E(N) * albedo;
+
+//    fragColor.xyz = vec3(D_beckmann(normalize(vec3(1, 1, 1))));
+
+//    fragColor.xyz = texture(dispMapSampler, inData.texcoord).xyz;
+
+    fragColor.xyz = dumbTest(fragColor.xyz);
 }

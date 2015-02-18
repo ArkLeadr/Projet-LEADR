@@ -249,23 +249,26 @@ void Renderer::setNbSamples( int nb_samples )
     m_scene->nbSample = nb_samples;
 }
 
-void Renderer::loadModel( const std::string & model_path )
+void Renderer::loadModel( const std::vector< std::string > & model_paths )
 {
-    
+    //vector of model files : obj, mtl
+    std::cout << "TODO load model" << std::endl;
 }
 
-void Renderer::loadTexture( const std::string & tex_path )
+void Renderer::loadTexture( const std::vector< std::string > & tex_paths )
 {
-    
+    //vector of texture files : jpg, leadrshc
+    std::cout << "TODO load texture" << std::endl;
 }
 
 void Renderer::loadEnvTexture( const std::string & env_path )
 {
+    std::cout << "TODO load texture" << std::endl;
 }
 
 void Renderer::loadIrradianceMap( const std::string & irr_path )
 {
-    
+    std::cout << "TODO load irr" << std::endl;
 }
 
 void Renderer::setStandardRendering()

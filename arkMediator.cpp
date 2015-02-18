@@ -42,14 +42,14 @@ void arkMediator::setNbSamples( int nb_samples )
     m_renderer->setNbSamples( m_nb_samples );
 }
 
-void arkMediator::loadModel( const std::string & model_path )
+void arkMediator::loadModel( const std::vector< std::string > & model_paths )
 {
-    m_renderer->loadModel( model_path );
+    m_renderer->loadModel( model_paths );
 }
 
-void arkMediator::loadTexture( const std::string & tex_path )
+void arkMediator::loadTexture( const std::vector< std::string > & tex_paths )
 {
-    m_renderer->loadTexture( tex_path );
+    m_renderer->loadTexture( tex_paths );
 }
 
 void arkMediator::loadEnvTexture( const std::string & env_path )

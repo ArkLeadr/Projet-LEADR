@@ -52,7 +52,7 @@ arkMediatorWidget( mediator_shptr )
     m_layout->addWidget( new QLabel( tr("LEADR mode : ") ), 6, 0, 2, 6 );
     m_layout->addWidget( m_leadr_mode, 6, 6, 2, 4 );
 
-    m_layout->addWidget( new QLabel( tr("LEADR mode : ") ), 8, 0, 2, 6 );
+    m_layout->addWidget( new QLabel( tr("Normal mode : ") ), 8, 0, 2, 6 );
     m_layout->addWidget( m_normal_mode, 8, 6, 2, 4 );
     
     connect

@@ -9,6 +9,7 @@
 #include "arkMainWindow.h"
 
 #include <QDockWidget>
+#include <QSettings>
 
 arkMainWindowShPtr arkMainWindow::create
 ( int width, int height, arkAbstractMediatorShPtr mediator_shptr )
@@ -48,11 +49,12 @@ arkMediatorWidget( mediator_shptr )
     m_ogl_widget = arkOpenGLWidget::create( fmt, m_mediator_shptr );
     dock_ogl_widget->setWidget( m_ogl_widget.get() );
     addDockWidget(Qt::LeftDockWidgetArea, dock_ogl_widget );
-    
+
     QDockWidget * dock_params_widget = new QDockWidget( "Params Widget" );
     m_params_panel = arkParamsPanel::create( m_mediator_shptr );
     dock_params_widget->setWidget( m_params_panel.get() );
     addDockWidget(Qt::RightDockWidgetArea, dock_params_widget );
+    dock_params_widget->setMaximumWidth( width / 3 );
 }
 
 arkMainWindow::~arkMainWindow()

@@ -14,6 +14,7 @@
 #include <QSpinBox>
 #include <QComboBox>
 #include <QGridLayout>
+#include <QPushButton>>
 #include <QLabel>
 #include "arkMediatorWidget.h"
 
@@ -43,6 +44,8 @@ class arkParamsPanel : public QWidget, public arkMediatorWidget
     
     QComboBox * m_leadr_mode;
     QComboBox * m_normal_mode;
+
+    QPushButton * m_reload_button;
     
     public slots :
     
@@ -50,8 +53,8 @@ class arkParamsPanel : public QWidget, public arkMediatorWidget
     void setNormalMode(int);
     void updateTesselationFactor(int);
     void updateNbSamples(int);
-    void updateDispFactor(int);
-    
+    void updateDispFactor(int);    
+    void reloadShader();
 };
 
 #endif /* defined(__arkGUI__arkParamsPanel__) */

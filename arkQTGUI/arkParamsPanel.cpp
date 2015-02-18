@@ -35,6 +35,8 @@ arkMediatorWidget( mediator_shptr )
     m_normal_mode->addItem( tr("Enabled") );
     m_normal_mode->addItem( tr("Disabled") );
 
+    m_reload_button = new QPushButton( tr("Reload Shader") );
+
     m_layout->addWidget( new QLabel( tr("tesselation factor : ") ), 0, 0, 2, 8 );
     m_layout->addWidget( m_tesselation_factor, 0, 8, 2, 2 );
     m_tesselation_factor->setValue(1);
@@ -55,6 +57,8 @@ arkMediatorWidget( mediator_shptr )
     m_layout->addWidget( new QLabel( tr("Normal mode : ") ), 8, 0, 2, 6 );
     m_layout->addWidget( m_normal_mode, 8, 6, 2, 4 );
     
+    m_layout->addWidget( m_reload_button, 10, 0, 2, 6 );
+
     connect
     ( m_tesselation_factor, SIGNAL( valueChanged(int) ), this, SLOT( updateTesselationFactor(int) ) );
     
@@ -65,6 +69,9 @@ arkMediatorWidget( mediator_shptr )
     connect( m_leadr_mode, SIGNAL( currentIndexChanged(int) ), this, SLOT( setLEADRMode(int) ) );
     
     connect( m_normal_mode, SIGNAL( currentIndexChanged(int) ), this, SLOT( setNormalMode(int) ) );
+
+    connect( m_reload_button, SIGNAL( released() ), this, SLOT( reloadShader() ) );
+
 }
 
 arkParamsPanel::~arkParamsPanel()
@@ -95,4 +102,9 @@ void arkParamsPanel::updateNbSamples( int value )
 void arkParamsPanel::updateDispFactor( int value )
 {
     m_mediator_shptr->setDispFactor( value );
+}
+
+void arkParamsPanel::reloadShader()
+{
+    m_mediator_shptr->reloadShader();
 }

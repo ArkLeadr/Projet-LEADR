@@ -6,6 +6,7 @@ uniform sampler2D normalMapSampler;
 uniform samplerCube cubeMapSampler;
 
 uniform sampler2DShadow shadowMapSampler;
+uniform int nbSample;
 
 uniform sampler2D dispMapSampler;
 

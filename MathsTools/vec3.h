@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <functional>
-
+#include <cmath>
 
 struct vec3
 {

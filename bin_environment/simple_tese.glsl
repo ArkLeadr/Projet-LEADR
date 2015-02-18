@@ -1,4 +1,4 @@
-#version 400 core
+#version 410 core
 
 layout(triangles, equal_spacing, cw) in;
 
@@ -8,21 +8,15 @@ out Data {
     vec3 tangent;
 
     vec3 position;
-
+    vec3 color;
 } outData;
-
-//in vec3 teNormal[];
-//in vec2 teTexcoord[];
-
-//out vec3 fNormal;
-//out vec2 fTexcoord;
-
-
-
 
 // Uniform
 
 uniform mat4 MVP;
+uniform mat4 view;
+uniform mat4 projection;
+
 uniform mat4 world;
 
 uniform sampler2D dispMapSampler;
@@ -49,7 +43,7 @@ struct outputPatch
 };
 
 
-in patch outputPatch oPatch;
+patch in outputPatch oPatch;
 
 
 vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2)
@@ -91,8 +85,10 @@ void main()
             oPatch.worldPos_B102 * 3.0 * w * vPow2 +
             oPatch.worldPos_B012 * 3.0 * u * vPow2 +
             oPatch.worldPos_B111 * 6.0 * w * u * v;
+   float disp = texture(dispMapSampler,outData.texcoord).x;
+    outData.position +=  outData.normal*disp*userDisplacementFactor;
+    gl_Position = projection * view * vec4(outData.position, 1.0);
 
-    gl_Position = MVP * vec4(outData.position, 1.0);
 }
 
 

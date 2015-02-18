@@ -101,6 +101,9 @@ public:
     Texture leadr2;
 
     LEADR_screenpass leadrScreenpass;
+
+    float tessFactor;
+    int nbSample;
 };
 
 #endif // SCENETORENAME_H

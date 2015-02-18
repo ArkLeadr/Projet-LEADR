@@ -9,7 +9,10 @@ Scene::Scene(int width, int height) :
     finalScreenPass(m_width, m_height, "quadFbo.frag"),
     toLuminancePass(m_width, m_height, "toLuminance.frag"),
     tonemapPass(m_width, m_height, "tonemap.frag"),
-    leadrScreenpass(m_width, m_height)
+    leadrScreenpass(m_width, m_height),
+	tessFactor(1),
+    nbSample(1),
+    userDisplacementFactor(0)
 {
 }
 
@@ -18,6 +21,7 @@ void Scene::initScene() {
     s.addFragmentShader("simple.frag");
     s.addTessControlShader("simple_tesc.glsl");
     s.addTessEvaluationShader("simple_tese.glsl");
+    //s.addGeometryShader("simple.geom");
     s.link();
 
 
@@ -216,6 +220,10 @@ void Scene::render()
 
     glUniform1f(glGetUniformLocation(s.getProgramId(), "userDisplacementFactor"), userDisplacementFactor);
     glUniform1i(glGetUniformLocation(s.getProgramId(), "wireframe"), wireframe);
+    glUniform1f(glGetUniformLocation(s.getProgramId(), "tessFactor"), tessFactor);
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "nbSample"), nbSample);
+
+    std::cout<<nbSample<<std::endl;
 
 
 
@@ -251,9 +259,11 @@ void Scene::render()
     shadowmap.bindShadowMapToTarget(GL_TEXTURE3);
 
     fbo->bind();
-
+    if(wireframe)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     mainModel.drawAsPatch(projection, camera.getView(), cubeTransformation, &s);
-
+    if(wireframe)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     Shader::unbind();
 
 

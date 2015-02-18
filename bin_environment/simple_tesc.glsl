@@ -1,4 +1,4 @@
-#version 400 core
+#version 410 core
 
 layout(vertices = 1) out;
 
@@ -10,6 +10,7 @@ in Data {
 } inData[];
 
 uniform vec3 eyePosition;
+uniform float tessFactor;
 
 struct outputPatch
 {
@@ -28,7 +29,7 @@ struct outputPatch
     vec2 texCoord[3];
 };
 
- out patch outputPatch oPatch;
+ patch out outputPatch oPatch;
 
  vec3 projectToPlane(vec3 point, vec3 planePoint, vec3 planeNormal)
  {
@@ -105,7 +106,6 @@ struct outputPatch
 
  float GetTessLevel(float Distance0, float Distance1)
  {
-     float c = 5;
      float sum = 0;
      vec3 t[10];
      t[0] = oPatch.worldPos_B030;
@@ -123,7 +123,7 @@ struct outputPatch
         sum += abs(length(t[i+1]-t[i]));
      }
 
-    return c*sum/((Distance0+Distance1)/2);
+    return tessFactor*sum/((Distance0+Distance1)/2);
 
  }
 
@@ -151,15 +151,16 @@ void main(void)
      float dist2 = (1 -abs( (inData[2].normal * (eyePosition - inData[2].pos))/abs(eyePosition - inData[2].pos)))*(10/zoom);
 */
      // Calculate the tessellation levels
-//     gl_TessLevelOuter[0] = GetTessLevel(dist1, dist2);
-//     gl_TessLevelOuter[1] = GetTessLevel(dist2, dist0);
-//     gl_TessLevelOuter[2] = GetTessLevel(dist0, dist1);
-//     gl_TessLevelInner[0] = gl_TessLevelOuter[2];
-    float lvl = 1;
+     gl_TessLevelOuter[0] = GetTessLevel(dist1, dist2);
+     gl_TessLevelOuter[1] = GetTessLevel(dist2, dist0);
+     gl_TessLevelOuter[2] = GetTessLevel(dist0, dist1);
+     gl_TessLevelInner[0] = gl_TessLevelOuter[2];
+   /* float lvl = 10;
 
      gl_TessLevelOuter[0] = lvl;
      gl_TessLevelOuter[1] = lvl;
      gl_TessLevelOuter[2] = lvl;
      gl_TessLevelInner[0] = gl_TessLevelOuter[2];
+     */
 }
 

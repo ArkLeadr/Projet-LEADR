@@ -121,6 +121,13 @@ void Model::handleNode(aiNode* ainode, const aiMatrix4x4& accumulatedTransformat
 
 }
 
+void Model::overrideNormalTexture(Texture &tex)
+{
+    for (auto& mat : m_materials) {
+        mat.overrideNormalTexture(tex);
+    }
+}
+
 bool Model::loadFromFile(const std::string& filename)
 {
     Assimp::Importer importer;

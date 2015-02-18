@@ -33,6 +33,7 @@ public:
     }
 
     bool loadFromAssimpMaterial(const aiMaterial* mat, std::string matBaseDir);
+    void overrideNormalTexture(Texture &tex);
 };
 
 #endif // MATERIAL_H

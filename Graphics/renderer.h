@@ -1,28 +1,28 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "QtGUI/rendererinterface.h"
+//#include "QtGUI/rendererinterface.h"
 
 #include "scene.h"
-
+#include <QKeyEvent>
 #include <string>
 
-class Renderer : public RendererInterface
+class Renderer /*: public RendererInterface*/
 {
 public:
     Renderer(int width, int height);
 
-    virtual void initializeGL(void);
-    virtual void resizeGL(int width, int height);
-    virtual void paintGL(void);
+    /*virtual*/ void initializeGL(void);
+    /*virtual*/ void resizeGL(int width, int height);
+    /*virtual*/ void paintGL(void);
 
-    virtual void loadModel(const std::string &filename);
+    //virtual void loadModel(const std::string &filename);
 
     virtual void onKeyPress(int qt_key);
 
-    virtual void reloadShader();
-    virtual void toggleWireframe();
-    virtual void setFinalFboTarget(int targetIndex);
+    /*virtual */void reloadShader();
+    /*virtual */void toggleWireframe();
+    /*virtual */void setFinalFboTarget(int targetIndex);
 
     bool initGL();
     void initScene();
@@ -34,6 +34,25 @@ public:
 
     void gammaChanged(float value);
     void keyValueChanged(float value);
+
+    /** **/
+    void setTesselationFactor( float tesselation_factor );
+    void setDispFactor( float disp_factor );
+    void setNbSamples( int nb_samples );
+    
+    void loadModel( const std::string & model_path );
+    void loadTexture( const std::string & tex_path );
+    void loadEnvTexture( const std::string & env_path );
+    void loadIrradianceMap( const std::string & irr_path );
+    
+    void setStandardRendering();
+    void setWireframeRendering();
+    void setDepthRendering();
+    
+    void setLEADRMode( bool leadr_mode );
+    void setNormalMode( bool normal_mode );
+    ~Renderer(){};
+    /** **/
 
 private:
     int m_width;

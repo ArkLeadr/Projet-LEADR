@@ -70,17 +70,14 @@ IF(DOGEGL_WINDOW_MANAGER STREQUAL "SDL2")
 ELSEIF(DOGEGL_WINDOW_MANAGER STREQUAL "QT")
     find_package(Qt5Core)
     find_package(Qt5Widgets)
-    find_package(Qt5OpenGL)
 
     include_directories(${Qt5Core_INCLUDE_DIRS})
-    include_directories(${Qt5Widgets_INCLUDE_DIRS})
-    include_directories(${Qt5OpenGL_INCLUDE_DIRS})
 
     add_definitions(-DUSE_QT)
 
-    add_subdirectory(arkQTGUI)
+    add_subdirectory(QtGUI)
 
-    target_link_libraries(${PROJECT_NAME} arkQTGUI)
+    target_link_libraries(${PROJECT_NAME} QtGUI)
 
 
 ELSE()

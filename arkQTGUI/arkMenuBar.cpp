@@ -54,36 +54,68 @@ arkMenuBar::~arkMenuBar()
 
 void arkMenuBar::loadModel()
 {
-    std::cout << "TODO loadModel" << std::endl;
+    QStringList files_paths =
+    QFileDialog::getOpenFileNames( this, tr( "Select Model files" ), "", tr( "Model Files (*.mtl *.obj)" ) );
 
-//    QStringList files_paths =
-//    QFileDialog::getOpenFileNames( this, tr( "Select Model files" ), "", tr( "Model Files (*.urdf *.env *.query)" ) );
-//    
-//    if ( ! files_paths.isEmpty() ) {
-//        std::vector< std::string > files;
-//        for ( QStringList::iterator it = files_paths.begin(); it != files_paths.end(); ++it )
-//        {
-//            files.push_back( it->toStdString() );
-//        }
-//        
-//        m_mediator_shptr->loadModel( files[0] );
-//        
-//    }
+    if ( ! files_paths.isEmpty() )
+    {
+        if (files_paths.length() <= 2)
+        {
+            std::vector< std::string > files;
+            for ( QStringList::iterator it = files_paths.begin(); it != files_paths.end(); ++it )
+            {
+                files.push_back( it->toStdString() );
+            }
+            m_mediator_shptr->loadModel( files );
+        }
+    }
 }
 
 void arkMenuBar::loadTexture()
 {
-    std::cout << "TODO loadTexture" << std::endl;
+    QStringList files_paths =
+    QFileDialog::getOpenFileNames( this, tr( "Select Displacement files" ), "", tr( "Model Files (*.jpg *.leadrshc)" ) );
+
+    if ( ! files_paths.isEmpty() )
+    {
+        if (files_paths.length() <= 2)
+        {
+            std::vector< std::string > files;
+            for ( QStringList::iterator it = files_paths.begin(); it != files_paths.end(); ++it )
+            {
+                files.push_back( it->toStdString() );
+            }
+            m_mediator_shptr->loadTexture( files );
+        }
+    }
 }
 
 void arkMenuBar::loadEnvTexture()
 {
-    std::cout << "TODO loadEnvTexture" << std::endl;
+    QStringList files_paths =
+    QFileDialog::getOpenFileNames( this, tr( "Select Environnement file" ), "", tr( "Model Files (*.hdr)" ) );
+
+    if ( ! files_paths.isEmpty() )
+    {
+        if (files_paths.length() <= 1)
+        {
+            m_mediator_shptr->loadEnvTexture( files_paths.begin()->toStdString() );
+        }
+    }
 }
 
 void arkMenuBar::loadIrradianceMap()
 {
-    std::cout << "TODO loadIrradianceMap" << std::endl;    
+    QStringList files_paths =
+    QFileDialog::getOpenFileNames( this, tr( "Select Irradiance file" ), "", tr( "Model Files (*.leadrshc)" ) );
+
+    if ( ! files_paths.isEmpty() )
+    {
+        if (files_paths.length() <= 1)
+        {
+            m_mediator_shptr->loadIrradianceMap( files_paths.begin()->toStdString() );
+        }
+    }
 }
 
 void arkMenuBar::setStandardRendering()

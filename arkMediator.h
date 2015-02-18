@@ -10,6 +10,7 @@
 #define __arkGUI__arkMediator__
 
 #include <memory>
+#include <vector>
 
 #include "arkQTGUI/arkAbstractMediator.h"
 #include "Graphics/renderer.h"
@@ -29,8 +30,8 @@ class arkMediator : public arkAbstractMediator
     virtual void setDispFactor( float disp_factor );
     virtual void setNbSamples( int nb_samples );
     
-    virtual void loadModel( const std::string & model_path );
-    virtual void loadTexture( const std::string & tex_path );
+    virtual void loadModel( const std::vector< std::string > & model_paths );
+    virtual void loadTexture( const std::vector< std::string > & tex_paths );
     virtual void loadEnvTexture( const std::string & env_path );
     virtual void loadIrradianceMap( const std::string & irr_path );
     

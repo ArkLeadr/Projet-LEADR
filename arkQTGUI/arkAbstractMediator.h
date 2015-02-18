@@ -10,6 +10,7 @@
 #define __arkGUI__arkAbstractMediator__
 
 #include <memory>
+#include <vector>
 
 class arkAbstractMediator;
 typedef std::shared_ptr<arkAbstractMediator> arkAbstractMediatorShPtr;
@@ -23,8 +24,8 @@ class arkAbstractMediator
     virtual void setDispFactor( float disp_factor ) = 0;
     virtual void setNbSamples( int nb_samples ) = 0;
     
-    virtual void loadModel( const std::string & model_path ) = 0;
-    virtual void loadTexture( const std::string & tex_path ) = 0;
+    virtual void loadModel( const std::vector< std::string > & model_paths ) = 0;
+    virtual void loadTexture( const std::vector< std::string > & tex_paths ) = 0;
     virtual void loadEnvTexture( const std::string & env_path ) = 0;
     virtual void loadIrradianceMap( const std::string & irr_path ) = 0;
     

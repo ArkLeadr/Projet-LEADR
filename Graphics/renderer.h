@@ -40,8 +40,8 @@ public:
     void setDispFactor( float disp_factor );
     void setNbSamples( int nb_samples );
     
-    void loadModel( const std::string & model_path );
-    void loadTexture( const std::string & tex_path );
+    void loadModel( const std::vector< std::string > & model_paths );
+    void loadTexture( const std::vector< std::string > & tex_paths );
     void loadEnvTexture( const std::string & env_path );
     void loadIrradianceMap( const std::string & irr_path );
     

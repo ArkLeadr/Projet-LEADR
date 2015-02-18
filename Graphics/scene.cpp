@@ -8,7 +8,10 @@ Scene::Scene(int width, int height) :
     reducePass(m_width, m_height, "reduce.frag"),
     finalScreenPass(m_width, m_height, "quadFbo.frag"),
     toLuminancePass(m_width, m_height, "toLuminance.frag"),
-    tonemapPass(m_width, m_height, "tonemap.frag")
+    tonemapPass(m_width, m_height, "tonemap.frag"),
+    tessFactor(1),
+    nbSample(1),
+    userDisplacementFactor(0)
 {
 }
 
@@ -197,6 +200,10 @@ void Scene::render()
 
     glUniform1f(glGetUniformLocation(s.getProgramId(), "userDisplacementFactor"), userDisplacementFactor);
     glUniform1i(glGetUniformLocation(s.getProgramId(), "wireframe"), wireframe);
+    glUniform1f(glGetUniformLocation(s.getProgramId(), "tessFactor"), tessFactor);
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "nbSample"), nbSample);
+
+    std::cout<<nbSample<<std::endl;
 
 
 
@@ -232,12 +239,11 @@ void Scene::render()
     shadowmap.bindShadowMapToTarget(GL_TEXTURE3);
 
     fbo->bind();
-
     if(wireframe)
-        glPolygonMode(GL_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     mainModel.drawAsPatch(projection, camera.getView(), cubeTransformation, &s);
     if(wireframe)
-        glPolygonMode(GL_BACK, GL_FILL);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     Shader::unbind();
 
 

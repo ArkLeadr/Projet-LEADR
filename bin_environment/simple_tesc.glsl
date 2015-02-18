@@ -1,4 +1,4 @@
-#version 400 core
+#version 410 core
 
 layout(vertices = 1) out;
 
@@ -10,6 +10,7 @@ in Data {
 } inData[];
 
 uniform vec3 eyePosition;
+uniform float tessFactor;
 
 struct outputPatch
 {
@@ -28,7 +29,7 @@ struct outputPatch
     vec2 texCoord[3];
 };
 
- out patch outputPatch oPatch;
+ patch out outputPatch oPatch;
 
  vec3 projectToPlane(vec3 point, vec3 planePoint, vec3 planeNormal)
  {
@@ -105,7 +106,6 @@ struct outputPatch
 
  float GetTessLevel(float Distance0, float Distance1)
  {
-     float c = 20octa;
      float sum = 0;
      vec3 t[10];
      t[0] = oPatch.worldPos_B030;
@@ -123,7 +123,7 @@ struct outputPatch
         sum += abs(length(t[i+1]-t[i]));
      }
 
-    return c*sum/((Distance0+Distance1)/2);
+    return tessFactor*sum/((Distance0+Distance1)/2);
 
  }
 

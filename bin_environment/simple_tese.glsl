@@ -1,4 +1,4 @@
-#version 400 core
+#version 410 core
 
 layout(triangles, equal_spacing, cw) in;
 
@@ -8,7 +8,7 @@ out Data {
     vec3 tangent;
 
     vec3 position;
-
+    vec3 color;
 } outData;
 
 // Uniform
@@ -43,7 +43,7 @@ struct outputPatch
 };
 
 
-in patch outputPatch oPatch;
+patch in outputPatch oPatch;
 
 
 vec2 interpolate2D(vec2 v0, vec2 v1, vec2 v2)

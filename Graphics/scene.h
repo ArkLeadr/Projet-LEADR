@@ -93,6 +93,9 @@ public:
     float keyValue = 0.18f;
 
     SphericalHarmonicsCoeffs shc;
+
+    float tessFactor;
+    int nbSample;
 };
 
 #endif // SCENETORENAME_H

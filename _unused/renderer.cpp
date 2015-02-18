@@ -49,12 +49,10 @@ void Renderer::paintGL(void) {
     render();
 }
 
-/*!!!
 void Renderer::loadModel(const std::string &filename)
 {
     m_scene->mainModel.loadFromFile(filename);
 }
-*/
 
 void Renderer::onKeyPress(int qt_key)
 {
@@ -80,10 +78,10 @@ void Renderer::onKeyPress(int qt_key)
         m_scene->position -= m_scene->up*0.1f;        }
 
     if (qt_key == Qt::Key_Plus) {
-        //m_scene->userDisplacementFactor += 0.005f;
+        m_scene->userDisplacementFactor += 0.005f;
     }
     else if (qt_key == Qt::Key_Minus) {
-        //m_scene->userDisplacementFactor -= 0.005f;
+        m_scene->userDisplacementFactor -= 0.005f;
     }
 
 //    if (qt_key == Qt::Key_W) {
@@ -231,69 +229,6 @@ void Renderer::keyValueChanged(float value)
 {
     m_scene->keyValue = value;
 }
-
-/* !!! *************************************************************************/
-
-void Renderer::setTesselationFactor( float tesselation_factor )
-{
-    m_scene->tessFactor = tesselation_factor;
-}
-
-void Renderer::setDispFactor( float disp_factor )
-{
-    m_scene->userDisplacementFactor = disp_factor*0.005f;
-}
-
-void Renderer::setNbSamples( int nb_samples )
-{
-    m_scene->nbSample = nb_samples;
-}
-
-void Renderer::loadModel( const std::string & model_path )
-{
-    
-}
-
-void Renderer::loadTexture( const std::string & tex_path )
-{
-    
-}
-
-void Renderer::loadEnvTexture( const std::string & env_path )
-{
-}
-
-void Renderer::loadIrradianceMap( const std::string & irr_path )
-{
-    
-}
-
-void Renderer::setStandardRendering()
-{
-    m_scene->wireframe = false;
-}
-
-void Renderer::setWireframeRendering()
-{
-    m_scene->wireframe = true;
-}
-
-void Renderer::setDepthRendering()
-{
-    
-}
-
-void Renderer::setLEADRMode( bool leadr_mode )
-{
-    
-}
-
-void Renderer::setNormalMode( bool normal_mode )
-{
-    
-}
-
-/******************************************************************************/
 
 void Renderer::render()
 {

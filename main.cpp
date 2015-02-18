@@ -1,49 +1,52 @@
+
 #include <iostream>
+#include "Graphics/renderer.h"
 
 #ifdef USE_QT
     #include <QApplication>
-    #include "QtGUI/mainwindow.h"
+    #include "arkMediator.h"
+    #include "arkQTGUI/arkMainWindow.h"
 #endif
 
 #ifdef USE_SDL2
     #include "Sdl2GUI/mainwindow.h"
 #endif
 
-#include "Graphics/renderer.h"
 
-int main(int argc, char *argv[])
+
+int main(int argc, char * argv[])
 {
-    Renderer renderer(640, 480);
-
-    #ifdef USE_SDL2
-
+    int width = 640; int height = 480;
+    
+#ifdef USE_SDL2
+    
     (void) argc;
     (void) argv;
-
-    MainWindow w("DogeGL Next Gen", 640, 480);
-
+    
+    MainWindow w("DogeGL Next Gen", width, height);
+    
     w.setRenderer(&renderer);
-
+    
     w.runLoop();
+    
+#endif
+    
 
-    #endif
+#ifdef USE_QT
 
+    Renderer renderer( width, height );
+    
+    QApplication application( argc, argv );
+    
+    arkMediatorShPtr mediator_shptr = arkMediator::create( &renderer );
 
-    #ifdef USE_QT
-
-    QApplication app(argc, argv);
-
-
-
-    MainWindow w;
-    w.setRenderer(&renderer); //DO NOT FORGET
-
-    w.show();
-
-    return(app.exec());
-
-    #endif
+    arkMainWindowShPtr main_window_shptr = arkMainWindow::create( width, height, mediator_shptr );
+    
+    main_window_shptr->show();
+    
+    return application.exec();
+    
+#endif
 
     return 0;
 }
-

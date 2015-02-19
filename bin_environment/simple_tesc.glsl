@@ -1,4 +1,4 @@
-#version 410 core
+#version 400 core
 
 layout(vertices = 1) out;
 
@@ -131,11 +131,27 @@ struct outputPatch
 void main(void)
 {
     float gTessellationLevel = 1;
-    for (int i = 0 ; i < 3 ; i++) {
-       oPatch.normal[i] = inData[i].normal;
-       oPatch.texCoord[i] = inData[i].texcoord;
-       oPatch.tangent[i] = inData[i].tangent;
-    }
+
+//    for (int i = 0 ; i < 3 ; i++) {
+//       oPatch.normal[i] = inData[i].normal;
+//       oPatch.texCoord[i] = inData[i].texcoord;
+//       oPatch.tangent[i] = inData[i].tangent;
+//    }
+
+
+    //UNROLL LOOP FOR MS INTEL DRIVER COMPLIANCE...
+    oPatch.normal[0] = inData[0].normal;
+    oPatch.texCoord[0] = inData[0].texcoord;
+    oPatch.tangent[0] = inData[0].tangent;
+
+    oPatch.normal[1] = inData[1].normal;
+    oPatch.texCoord[1] = inData[1].texcoord;
+    oPatch.tangent[1] = inData[1].tangent;
+
+    oPatch.normal[2] = inData[2].normal;
+    oPatch.texCoord[2] = inData[2].texcoord;
+    oPatch.tangent[2] = inData[2].tangent;
+
 
     CalcPositions();
 

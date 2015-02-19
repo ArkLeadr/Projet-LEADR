@@ -103,8 +103,8 @@ void Scene::initScene() {
 //    printMatricesToGlslDeclaration(shc);
 
 //    importLeadrTextures("tex1", "tex2", leadr1, leadr2);
-    importLeadrTextures("C:\\Users\\Robin\\Desktop\\LEADR\\GenTexLEADR\\GenTexLEADR\\build\\wall002_hmap2_512x512.leadr1",
-                        "C:\\Users\\Robin\\Desktop\\LEADR\\GenTexLEADR\\GenTexLEADR\\build\\wall002_hmap2_512x512.leadr2",
+    importLeadrTextures("wall002_hmap2_512x512.leadr1",
+                        "wall002_hmap2_512x512.leadr2",
                         leadr1, leadr2);
 }
 
@@ -222,9 +222,6 @@ void Scene::render()
     glUniform1i(glGetUniformLocation(s.getProgramId(), "wireframe"), wireframe);
     glUniform1f(glGetUniformLocation(s.getProgramId(), "tessFactor"), tessFactor);
     glUniform1i(glGetUniformLocation(s.getProgramId(), "nbSample"), nbSample);
-
-    std::cout<<nbSample<<std::endl;
-
 
 
     /* SHADOW PASS */

@@ -73,7 +73,7 @@ void main()
     float uPow2 = u*u;
     float vPow2 = v*v;
     float wPow2 = w*w;
-
+/*
     outData.position =
             oPatch.worldPos_B300 * wPow3 +
             oPatch.worldPos_B030 * uPow3 +
@@ -85,6 +85,13 @@ void main()
             oPatch.worldPos_B102 * 3.0 * w * vPow2 +
             oPatch.worldPos_B012 * 3.0 * u * vPow2 +
             oPatch.worldPos_B111 * 6.0 * w * u * v;
+            */
+            outData.position =
+                    oPatch.worldPos_B300 * w +
+                    oPatch.worldPos_B030 * u +
+                    oPatch.worldPos_B003 * v
+              ;
+
    float disp = texture(dispMapSampler,outData.texcoord).x;
     outData.position +=  outData.normal*disp*userDisplacementFactor;
     gl_Position = projection * view * vec4(outData.position, 1.0);

@@ -52,7 +52,8 @@ ENDIF()
 
 ## TMP HACK FOR QT KEYBOARD ENUM ##
     find_package(Qt5Core)
-    include_directories(${Qt5Core_INCLUDE_DIRS})
+    find_package(Qt5Gui)
+    include_directories(${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS})
 ## ##
 
 

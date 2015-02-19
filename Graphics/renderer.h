@@ -1,14 +1,19 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-//#include "QtGUI/rendererinterface.h"
+
 
 #include "scene.h"
 #include <QKeyEvent>
 #include <string>
 
-class Renderer /*: public RendererInterface*/
-{
+#ifdef USE_SDL2
+#include "Sdl2GUI/rendererinterface.h"
+
+class Renderer : public RendererInterface {
+#else
+class Renderer /*: public RendererInterface*/ {
+#endif
 public:
     Renderer(int width, int height);
 

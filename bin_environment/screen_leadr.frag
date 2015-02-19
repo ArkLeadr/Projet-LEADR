@@ -41,6 +41,8 @@ vec3 fresnel_schlick(vec3 f0, float LdotH) {
 uniform sampler2D leadr1; //~x, ~y, ~x*~y, ~x²
 uniform sampler2D leadr2; //~y², h
 
+uniform sampler2D dispMapSampler;
+
 float E_xn = 0;
 float E_yn = 0;
 float E_xnyn = 0;
@@ -64,7 +66,7 @@ float c_xy = 0;
 /* Traitement LEADR */
 void computeLeadrStatistics()
 {
-    float fakeLod = 1;
+    float fakeLod = 0;
 
     vec4 stats1 = textureLod(leadr1, screenTexCoord, fakeLod);
     vec4 stats2 = textureLod(leadr2, screenTexCoord, fakeLod);
@@ -204,67 +206,6 @@ float roughSpecularPointLight(vec3 L) {
 }
 
 
-const int nbSamples = 5;
-const float sampleLength = 0.9;
-
-const float p[5] = float[5](-1.8, -0.9, 0, 0.9, 1.8);
-const float w[5] = float[5](0.0725, 0.2443, 0.3663, 0.2443, 0.0725);
-
-/* TODO : see how to integrate Fresnel + smith terms in this equation */
-//vec3 roughSpecularCubeMap() {
-//    float sigma_x = sqrt(var_x);
-//    float sigma_y = sqrt(var_y);
-
-//    float r_xy = 1;
-
-//    if (sigma_x*sigma_y != 0)
-//        r_xy = c_xy / (sigma_x*sigma_y);
-
-//    float sq_one_minus_r_xy2 = sqrt(1 - r_xy*r_xy);
-
-////    float LODoffset = -1.48 + log2(sampleLength*max(sigma_x, sigma_y)* float(textureSize(cubeMapSampler, 0).x));
-
-//    // Replace -1.48 by 0.5 as said in the supplemental
-//    float LODoffset = 0.5 + log2(sampleLength*max(sigma_x, sigma_y)* float(textureSize(cubeMapSampler, 0).x));
-
-//    float S = 0;
-//    vec3 I = vec3(0);
-
-
-//    for (int j = 0; j < nbSamples; ++j) {
-//        for (int k = 0; k < nbSamples; ++k) {
-//            float x = p[j]*sigma_x + E_xn;
-//            float y = (r_xy*p[j] + sq_one_minus_r_xy2*p[k]) * sigma_y + E_yn;
-
-
-//            // microfacet normal
-//            vec3 meso = getMesoWorld();
-
-//            // microfacet projected area
-//            float dotVN = max(0.0, dot(V, meso));
-//            float dotZN = dot(N, meso);
-//            float S_ = dotVN / dotZN;
-
-//            // reflected vector
-//            vec3 R = reflect(-V, meso);
-
-//            // Jacobian : slope space area to solid angle
-//            float J = abs(4.0 * dotZN*dotZN*dotZN * dotVN);
-
-//            // LOD in cube map
-//            float LOD = 0.72*log(J) + LODoffset ;
-//            // radiance
-//            vec3 I_ = textureLod(cubeMapSampler, R, LOD).rgb;
-//            // sum up
-//            S += w[j]*w[k] * S_ ;
-//            I += w[j]*w[k] * S_ * I_ ;
-//        }
-//    }
-
-//    return I / S;
-//}
-
-
 /* LEADR SPECIFIC END */
 
 vec3 dumbTest(vec3 self) {
@@ -274,7 +215,11 @@ vec3 dumbTest(vec3 self) {
 
 //    return vec3(float(c_xy > 10));
 
+//    return texture(dispMapSampler, screenTexCoord).xyz;
+
 //    return vec3(disp);
+
+    return vec3(P22(0, 0));
 
     return vec3(D_beckmann(vec3(0.0, 0.0, 1.0)));
 

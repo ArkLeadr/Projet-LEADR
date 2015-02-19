@@ -16,6 +16,7 @@
 #include <QGridLayout>
 #include <QPushButton>>
 #include <QLabel>
+#include <QShortcut>
 #include "arkMediatorWidget.h"
 
 class arkParamsPanel;
@@ -46,6 +47,8 @@ class arkParamsPanel : public QWidget, public arkMediatorWidget
     QComboBox * m_normal_mode;
 
     QPushButton * m_reload_button;
+
+    QShortcut *m_reload_shortcut;
     
     public slots :
     

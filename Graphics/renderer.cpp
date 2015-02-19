@@ -278,7 +278,7 @@ void Renderer::setStandardRendering()
 
 void Renderer::setWireframeRendering()
 {
-    m_scene->wireframe = true;
+    m_scene->wireframe = !m_scene->wireframe;
 }
 
 void Renderer::setDepthRendering()

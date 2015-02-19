@@ -29,8 +29,14 @@ arkMediatorWidget( mediator_shptr )
     QAction * load_env_action = file_menu->addAction( tr( "&Load Env" ) );
     QAction * load_irr_map_action = file_menu->addAction( tr( "&Load Irr Map" ) );
     
-    QAction * standard_action = rendering_menu->addAction( tr( "&Standard" ) );
-    QAction * wireframe_action = rendering_menu->addAction( tr( "&Wireframe" ) );
+    QAction * standard_action = rendering_menu->addAction( tr( "&Standard" ) ,
+                                                           this, "setStandardRendering", QKeySequence(Qt::CTRL + Qt::Key_0));
+    QAction * normal_action = rendering_menu->addAction( tr( "&Normal" ) ,
+                                                           this, "setNormalRendering", QKeySequence(Qt::CTRL + Qt::Key_1));
+    QAction * texcoord_action = rendering_menu->addAction( tr( "&Texcoord" ) ,
+                                                           this, "setTexcoordRendering", QKeySequence(Qt::CTRL + Qt::Key_2));
+    QAction * wireframe_action = rendering_menu->addAction( tr( "&Wireframe" ) ,
+                                                            this, "setWireframeRendering", QKeySequence(Qt::CTRL + Qt::Key_F));
     QAction * depth_action = rendering_menu->addAction( tr( "&Depth" ) );
     
     
@@ -40,6 +46,8 @@ arkMediatorWidget( mediator_shptr )
     connect( load_irr_map_action, SIGNAL( triggered() ), this, SLOT( loadIrradianceMap() ) );
 
     connect( standard_action, SIGNAL( triggered() ), this, SLOT( setStandardRendering() ) );
+    connect( normal_action, SIGNAL( triggered() ), this, SLOT( setNormalRendering() ) );
+    connect( texcoord_action, SIGNAL( triggered() ), this, SLOT( setTexcoordRendering() ) );
     connect( wireframe_action, SIGNAL( triggered() ), this, SLOT( setWireframeRendering() ) );
     connect( depth_action, SIGNAL( triggered() ), this, SLOT( setDepthRendering() ) );
     
@@ -131,4 +139,14 @@ void arkMenuBar::setWireframeRendering()
 void arkMenuBar::setDepthRendering()
 {
     m_mediator_shptr->setDepthRendering();
+}
+
+void arkMenuBar::setNormalRendering()
+{
+    m_mediator_shptr->setNormalRendering();
+}
+
+void arkMenuBar::setTexcoordRendering()
+{
+    m_mediator_shptr->setTexcoordRendering();
 }

@@ -84,7 +84,7 @@ void arkMediator::setNormalRendering()
 
 void arkMediator::setTexcoordRendering()
 {
-    m_renderer->setFinalFboTarget(1);
+    m_renderer->setFinalFboTarget(2);
 }
 
 void arkMediator::setLEADRMode( bool leadr_mode )

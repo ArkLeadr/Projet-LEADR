@@ -37,6 +37,8 @@ arkMediatorWidget( mediator_shptr )
 
     m_reload_button = new QPushButton( tr("Reload Shader") );
 
+    m_reload_shortcut = new QShortcut(QKeySequence("Ctrl+R"), this);
+
     m_layout->addWidget( new QLabel( tr("tesselation factor : ") ), 0, 0, 2, 8 );
     m_layout->addWidget( m_tesselation_factor, 0, 8, 2, 2 );
     m_tesselation_factor->setValue(1);
@@ -72,6 +74,7 @@ arkMediatorWidget( mediator_shptr )
 
     connect( m_reload_button, SIGNAL( released() ), this, SLOT( reloadShader() ) );
 
+    QObject::connect(m_reload_shortcut, SIGNAL(activated()), this, SLOT( reloadShader() ) );
 }
 
 arkParamsPanel::~arkParamsPanel()

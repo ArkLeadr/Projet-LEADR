@@ -55,7 +55,7 @@ arkMediatorWidget( mediator_shptr )
 
     fmt.setProfile(QGLFormat::CoreProfile);
     
-    if (!(QGLFormat::openGLVersionFlags() & opengl_version_flag))
+    if (!((QGLFormat::openGLVersionFlags() & opengl_version_flag) && (QGLFormat::openGLVersionFlags() & QGLFormat::CoreProfile)))
     {
         if (opengl_version_flag == QGLFormat::OpenGL_Version_4_0)
             std::cout << "Failed to create a valid Core Opengl 4.0 Profile. \n";

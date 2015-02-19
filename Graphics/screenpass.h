@@ -22,6 +22,7 @@ public:
         m_width(width),
         m_height(height)
     {
+        m_shader.addVertexShader("quadFbo.vert");
         m_shader.addFragmentShader(shaderFilename);
         m_shader.link();
 

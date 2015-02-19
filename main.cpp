@@ -17,9 +17,10 @@
 int main(int argc, char * argv[])
 {
     int width = 640; int height = 480;
+
+    Renderer renderer( width, height );
     
-#ifdef USE_SDL2
-    
+#ifdef USE_SDL2    
     (void) argc;
     (void) argv;
     
@@ -27,15 +28,11 @@ int main(int argc, char * argv[])
     
     w.setRenderer(&renderer);
     
-    w.runLoop();
-    
+    w.runLoop();    
 #endif
     
 
-#ifdef USE_QT
-
-    Renderer renderer( width, height );
-    
+#ifdef USE_QT    
     QApplication application( argc, argv );
     
     arkMediatorShPtr mediator_shptr = arkMediator::create( &renderer );
@@ -44,8 +41,7 @@ int main(int argc, char * argv[])
     
     main_window_shptr->show();
     
-    return application.exec();
-    
+    return application.exec();    
 #endif
 
     return 0;

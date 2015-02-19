@@ -43,6 +43,8 @@ class arkMenuBar : public QMenuBar, public arkMediatorWidget
     void setStandardRendering();
     void setWireframeRendering();
     void setDepthRendering();
+    void setNormalRendering();
+    void setTexcoordRendering();
 };
 
 #endif /* defined(__arkGUI__arkMenuBar__) */

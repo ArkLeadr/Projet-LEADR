@@ -38,7 +38,9 @@ class arkMediator : public arkAbstractMediator
     virtual void setStandardRendering();
     virtual void setWireframeRendering();
     virtual void setDepthRendering();
-    
+    virtual void setNormalRendering();
+    virtual void setTexcoordRendering();
+
     virtual void setLEADRMode( bool leadr_mode );
     virtual void setNormalMode( bool normal_mode );
     virtual void reloadShader();

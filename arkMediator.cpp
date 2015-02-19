@@ -64,7 +64,7 @@ void arkMediator::loadIrradianceMap( const std::string & irr_path )
 
 void arkMediator::setStandardRendering()
 {
-    m_renderer->setStandardRendering();
+    m_renderer->setFinalFboTarget(0);
 }
 
 void arkMediator::setWireframeRendering()
@@ -75,6 +75,16 @@ void arkMediator::setWireframeRendering()
 void arkMediator::setDepthRendering()
 {
     m_renderer->setDepthRendering();
+}
+
+void arkMediator::setNormalRendering()
+{
+    m_renderer->setFinalFboTarget(1);
+}
+
+void arkMediator::setTexcoordRendering()
+{
+    m_renderer->setFinalFboTarget(1);
 }
 
 void arkMediator::setLEADRMode( bool leadr_mode )

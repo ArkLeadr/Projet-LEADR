@@ -24,7 +24,7 @@ arkMainWindow::arkMainWindow
 QMainWindow(),
 arkMediatorWidget( mediator_shptr )
 {
-    setGeometry( 0, 0, width, height );
+    resize(width, height);
     
     m_menu_bar = arkMenuBar::create( m_mediator_shptr );
     setMenuBar( m_menu_bar.get() );

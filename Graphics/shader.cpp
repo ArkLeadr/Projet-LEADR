@@ -48,16 +48,18 @@ bool Shader::addShader(std::string filename, GLenum type) {
 
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &shader_compiled);
 
+    GLsizei log_length = 0;
+    GLchar message[4096];
+    glGetShaderInfoLog(shaderId, 4096, &log_length, message);
 
     if (shader_compiled != GL_TRUE)
     {
-        GLsizei log_length = 0;
-        GLchar message[1024];
-        glGetShaderInfoLog(shaderId, 1024, &log_length, message);
-
-        std::cerr << "Error compiling shader " << filename << ": " << message;
+        std::cerr << "Error compiling shader " << filename << ": " << message << '\n';
 
         return false;
+    }
+    else if(strlen(message)) {
+        std::cerr << "Althoug compiled with success, shader " << filename << " has following compile output: " << message << '\n';
     }
 
     if (type == GL_VERTEX_SHADER) {

@@ -28,6 +28,13 @@ arkMediatorWidget( mediator_shptr )
     
     m_menu_bar = arkMenuBar::create( m_mediator_shptr );
     setMenuBar( m_menu_bar.get() );
+
+    //UGLY, BUT SHOULD WORK FOR OUR MODEST NEEDS
+#ifdef WIN32
+    unsigned int opengl_version_flag = QGLFormat::OpenGL_Version_4_0;
+#else
+    unsigned int opengl_version_flag = QGLFormat::OpenGL_Version_4_1;
+#endif
     
     QGLFormat fmt;
     fmt.setDoubleBuffer(true);
@@ -36,12 +43,25 @@ arkMediatorWidget( mediator_shptr )
     fmt.setStencil(false);
     fmt.setDepth(true);
     fmt.setAlpha(false);
-    fmt.setVersion(4, 1);
+
+    if (opengl_version_flag == QGLFormat::OpenGL_Version_4_0)
+        fmt.setVersion(4, 0);
+    else if (opengl_version_flag == QGLFormat::OpenGL_Version_4_1)
+        fmt.setVersion(4, 1);
+    else {
+        std::cout << "Asked OpenGL version is unsupported. \n";
+        exit(EXIT_FAILURE);
+    }
+
     fmt.setProfile(QGLFormat::CoreProfile);
     
-    if (!(QGLFormat::openGLVersionFlags() & QGLFormat::OpenGL_Version_4_1))
+    if (!(QGLFormat::openGLVersionFlags() & opengl_version_flag))
     {
-        std::cout << "Failed to create a valid Core Opengl 4.1 Profile. \n";
+        if (opengl_version_flag == QGLFormat::OpenGL_Version_4_0)
+            std::cout << "Failed to create a valid Core Opengl 4.0 Profile. \n";
+        else if (opengl_version_flag == QGLFormat::OpenGL_Version_4_1)
+            std::cout << "Failed to create a valid Core Opengl 4.1 Profile. \n";
+
         exit(EXIT_FAILURE);
     }
     

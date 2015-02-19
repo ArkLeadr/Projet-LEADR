@@ -19,7 +19,7 @@ arkOpenGLWidget::arkOpenGLWidget( QGLFormat format, arkAbstractMediatorShPtr med
 QGLWidget( format ),
 arkMediatorWidget( mediator_shptr )
 {
-        setFocusPolicy(Qt::StrongFocus);
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 arkOpenGLWidget::~arkOpenGLWidget()

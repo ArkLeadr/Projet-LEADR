@@ -139,28 +139,14 @@ void main(void)
 
     CalcPositions();
 
-
     // Calculate the distance from the camera to the three control points
      float dist0 = distance(eyePosition, inData[0].pos);
      float dist1 = distance(eyePosition, inData[1].pos);
      float dist2 = distance(eyePosition, inData[2].pos);
 
-  /*  float zoom = 1.0;
-     float dist0 = (1 -abs( (inData[0].normal * (eyePosition - inData[0].pos))/abs(eyePosition - inData[0].pos)))*(10/zoom);
-     float dist1 = (1 -abs( (inData[1].normal * (eyePosition - inData[1].pos))/abs(eyePosition - inData[1].pos)))*(10/zoom);
-     float dist2 = (1 -abs( (inData[2].normal * (eyePosition - inData[2].pos))/abs(eyePosition - inData[2].pos)))*(10/zoom);
-*/
-     // Calculate the tessellation levels
      gl_TessLevelOuter[0] = GetTessLevel(dist1, dist2);
      gl_TessLevelOuter[1] = GetTessLevel(dist2, dist0);
      gl_TessLevelOuter[2] = GetTessLevel(dist0, dist1);
      gl_TessLevelInner[0] = gl_TessLevelOuter[2];
-   /* float lvl = 10;
 
-     gl_TessLevelOuter[0] = lvl;
-     gl_TessLevelOuter[1] = lvl;
-     gl_TessLevelOuter[2] = lvl;
-     gl_TessLevelInner[0] = gl_TessLevelOuter[2];
-     */
 }
-

@@ -62,21 +62,11 @@ arkMenuBar::~arkMenuBar()
 
 void arkMenuBar::loadModel()
 {
-    QStringList files_paths =
-    QFileDialog::getOpenFileNames( this, tr( "Select Model files" ), "", tr( "Model Files (*.mtl *.obj)" ) );
+    QString file_path =
+    QFileDialog::getOpenFileName( this, tr( "Select Model file" ), "", tr( "Model Files (*)" ) );
 
-    if ( ! files_paths.isEmpty() )
-    {
-        if (files_paths.length() <= 2)
-        {
-            std::vector< std::string > files;
-            for ( QStringList::iterator it = files_paths.begin(); it != files_paths.end(); ++it )
-            {
-                files.push_back( it->toStdString() );
-            }
-            m_mediator_shptr->loadModel( files );
-        }
-    }
+    if (file_path != "")
+        m_mediator_shptr->loadModel( file_path.toStdString() );
 }
 
 void arkMenuBar::loadTexture()

@@ -16,7 +16,7 @@
 
 int main(int argc, char * argv[])
 {
-    int width = 640; int height = 480;
+    int width = 640 + 89 + 45; int height = 480 + 75;
 
     Renderer renderer( width, height );
     

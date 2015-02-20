@@ -11,6 +11,7 @@
 #include "skybox.h"
 #include "shadowmap.h"
 #include "screenpass.h"
+#include "envmap.h"
 
 #include "MathsTools/mat4.h"
 #include "MathsTools/vec3.h"
@@ -79,6 +80,8 @@ public:
     Texture dogeMap;
 
     Cubemap cubemap;
+
+    EnvMap envmap;
 
     Skybox skybox;
 

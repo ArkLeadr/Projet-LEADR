@@ -285,18 +285,6 @@ void Renderer::onKeyPress(int qt_key)
 
 void Renderer::reloadShader()
 {
-//    // Reload Shaders
-//    m_scene->s.renew();
-
-//    m_scene->s.addVertexShader("simple.vert");
-//    m_scene->s.addFragmentShader("simple.frag");
-//    m_scene->s.addTessControlShader("simple_tesc.glsl");
-//    m_scene->s.addTessEvaluationShader("simple_tese.glsl");
-//    m_scene->s.addGeometryShader("simple.geom");
-//    m_scene->s.link();
-
-//    m_scene->s.reload();
-
     m_scene->reloadShaders();
 }
 
@@ -415,10 +403,9 @@ void Renderer::setNbSamples( int nb_samples )
     m_scene->nbSample = nb_samples;
 }
 
-void Renderer::loadModel( const std::vector< std::string > & model_paths )
+void Renderer::loadModel( const std::string& model_path )
 {
-    //vector of model files : obj, mtl
-    std::cout << "TODO load model" << std::endl;
+    m_scene->mainModel.loadFromFile(model_path);
 }
 
 void Renderer::loadTexture( const std::vector< std::string > & tex_paths )

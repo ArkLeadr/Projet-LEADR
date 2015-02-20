@@ -14,7 +14,7 @@
 #include <QSpinBox>
 #include <QComboBox>
 #include <QGridLayout>
-#include <QPushButton>>
+#include <QPushButton>
 #include <QLabel>
 #include <QShortcut>
 #include "arkMediatorWidget.h"

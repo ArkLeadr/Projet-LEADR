@@ -47,10 +47,10 @@ void Scene::initScene() {
     camera.setProperties(vec3{0.f, 0.f, -1.f}, vec3{0.f, 0.f, 1.f}, vec3{0.f, 1.f, 0.f});
 
 //    mainModel.loadBasicType(Model::BasicType::PLAN);
-    mainModel.loadFromFile("plan.obj");
+//    mainModel.loadFromFile("plan.obj");
 //    mainModel.loadFromFile("cube_and_floor.obj");
 //    mainModel.loadFromFile("Worn_Down_House/destroyed_house.obj");
-//    mainModel.loadFromFile("hi_sphere.obj");
+    mainModel.loadFromFile("hi_sphere.obj");
 //    mainModel.loadFromFile("Astroboy/astroBoy_walk_Maya.dae");
 //    mainModel.loadFromFile("SimpleModel/demo.dae");
 //    mainModel.loadFromFile("cubenorm.obj");
@@ -92,6 +92,8 @@ void Scene::initScene() {
 
     skybox.feedCubemap(cubemap);
 
+    envmap.loadFromFile("grace_probe.hdr");
+
     fbo.reset(new FBO(m_width, m_height, 3));
 
     importCoeffs("grace_probe.leadrshc", shc);
@@ -103,9 +105,9 @@ void Scene::initScene() {
 //    printMatricesToGlslDeclaration(shc);
 
 //    importLeadrTextures("tex1", "tex2", leadr1, leadr2);
-    importLeadrTextures("wall002_hmap2_512x512.leadr1",
-                        "wall002_hmap2_512x512.leadr2",
-                        leadr1, leadr2);
+    importLeadrTextures("wall002_hmap2_512x512.leadr1", "wall002_hmap2_512x512.leadr2", leadr1, leadr2);
+
+//    importLeadrTextures("wgnoise.leadr1", "wgnoise.leadr2", leadr1, leadr2);
 }
 
 void Scene::resize(int width, int height)
@@ -181,7 +183,8 @@ void Scene::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    skybox.render(projection, camera.getPureViewNoTranslation());
+//    skybox.render(projection, camera.getPureViewNoTranslation());
+    envmap.render(projection, camera.getPureViewNoTranslation());
 //        skybox.render(projection, camera.getView());
 
     FBO::unbind();

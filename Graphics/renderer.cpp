@@ -408,20 +408,33 @@ void Renderer::loadModel( const std::string& model_path )
     m_scene->mainModel.loadFromFile(model_path);
 }
 
-void Renderer::loadTexture( const std::vector< std::string > & tex_paths )
+void Renderer::loadLEADRTexture( const std::string & leadr1, const std::string & leadr2 )
 {
-    //vector of texture files : jpg, leadrshc
-    std::cout << "TODO load texture" << std::endl;
+    importLeadrTextures(leadr1.c_str(), leadr2.c_str(), m_scene->leadr1, m_scene->leadr2);
+}
+
+void Renderer::loadTexture( const std::string & texture)
+{
+    m_scene->texture.loadFromFile( texture );
+}
+void Renderer::loadDispMap( const std::string & disp_map )
+{
+    m_scene->dogeMap.loadFromFile( disp_map );
+}
+void Renderer::loadNormalMap( const std::string & normal_map )
+{
+    m_scene->normalMap.loadFromFile( normal_map );
 }
 
 void Renderer::loadEnvTexture( const std::string & env_path )
 {
-    std::cout << "TODO load texture" << std::endl;
+    m_scene->envmap.loadFromFile( env_path );
 }
 
 void Renderer::loadIrradianceMap( const std::string & irr_path )
 {
-    std::cout << "TODO load irr" << std::endl;
+    importCoeffs( irr_path.c_str(), m_scene->shc );
+    computeMatrixRepresentation( m_scene->shc );
 }
 
 void Renderer::setStandardRendering()

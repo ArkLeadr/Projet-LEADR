@@ -7,9 +7,9 @@ aux_source_directory(./Utils SRC_LIST)
 
 include_directories(.)
 
-#if (NOT CMAKE_BUILD_TYPE)
+if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE Debug)
-#endif()
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules/")
 

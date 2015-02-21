@@ -24,4 +24,10 @@ filename="$dll_type"_ultra_lzma.zip
 #-N : only if file is newer
 wget -N http://149.91.81.176/ServerPackage/DLLs/"$filename"
 
-7z e -aoa "$filename"
+7z x -aoa "$filename"
+
+cp -r ./"$dll_type"/* .
+rm -rf ./"$dll_type"
+
+
+

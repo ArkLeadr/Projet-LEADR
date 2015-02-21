@@ -21,7 +21,6 @@ void Scene::initScene() {
     s.addFragmentShader("simple.frag");
     s.addTessControlShader("simple_tesc.glsl");
     s.addTessEvaluationShader("simple_tese.glsl");
-    //s.addGeometryShader("simple.geom");
     s.link();
 
 
@@ -35,23 +34,10 @@ void Scene::initScene() {
     renewableShadersList.push_back(&(leadrScreenpass.getShader()));
 
 
-//    quadFboShader.addFragmentShader("quadFbo.frag");
-//    quadFboShader.link();
-
-//    reduceShader.addFragmentShader("reduce.frag");
-//    reduceShader.link();
-
-//    quadFbo.loadFullscreenQuad();
-
-
     camera.setProperties(vec3{0.f, 0.f, -1.f}, vec3{0.f, 0.f, 1.f}, vec3{0.f, 1.f, 0.f});
 
-//    mainModel.loadBasicType(Model::BasicType::PLAN);
 //    mainModel.loadFromFile("plan.obj");
-//    mainModel.loadFromFile("cube_and_floor.obj");
-//    mainModel.loadFromFile("Worn_Down_House/destroyed_house.obj");
     mainModel.loadFromFile("hi_sphere.obj");
-//    mainModel.loadFromFile("Astroboy/astroBoy_walk_Maya.dae");
 //    mainModel.loadFromFile("SimpleModel/demo.dae");
 //    mainModel.loadFromFile("cubenorm.obj");
 
@@ -72,9 +58,7 @@ void Scene::initScene() {
 
     mainModel.overrideNormalTexture(normalMap);
 
-//    dogeMap.loadFromFile("basic_displacement_map.png");
     dogeMap.loadFromFile("disp_data/wall002_hmap2_512x512.jpg");
-
 //    dogeMap.loadFromMaterialColor(Color3f{0, 0, 0});
 
 
@@ -84,13 +68,6 @@ void Scene::initScene() {
     cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Y, "Ryfjallet_512/negy.jpg");
     cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "Ryfjallet_512/posz.jpg");
     cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "Ryfjallet_512/negz.jpg");
-
-//    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_X, "grace/posx.jpg");
-//    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_X, "grace/negx.jpg");
-//    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Y, "grace/posy.jpg");
-//    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Y, "grace/negy.jpg");
-//    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "grace/posz.jpg");
-//    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "grace/negz.jpg");
 
     skybox.feedCubemap(cubemap);
 
@@ -107,7 +84,7 @@ void Scene::initScene() {
 //    printMatricesToGlslDeclaration(shc);
 
 //    importLeadrTextures("tex1", "tex2", leadr1, leadr2);
-    importLeadrTextures("wall002_hmap2_512x512.leadr1", "wall002_hmap2_512x512.leadr2", leadr1, leadr2);
+    importLeadrTextures("disp_data/wall002_hmap2_512x512.leadr1", "disp_data/wall002_hmap2_512x512.leadr2", leadr1, leadr2);
 
 //    importLeadrTextures("wgnoise.leadr1", "wgnoise.leadr2", leadr1, leadr2);
 //    importLeadrTextures("pillow/silk_bump.leadr1", "pillow/silk_bump.leadr2", leadr1, leadr2);

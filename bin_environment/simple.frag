@@ -101,7 +101,7 @@ void computeLeadrStatistics()
     vec4 stats1 = texture(leadr1, inData.texcoord);
     vec4 stats2 = texture(leadr2, inData.texcoord);
 
-    float baseRoughnessOffset = 0;
+    float baseRoughnessOffset = 0.1;
 
     E_xn    = stats1.x;
     E_yn    = stats1.y;
@@ -117,7 +117,6 @@ void computeLeadrStatistics()
     var_y = E_yn2 - E_yn*E_yn  + baseRoughnessOffset;
 
     c_xy = E_xnyn - E_xn*E_yn;
-
 }
 
 vec3 getMesoTan() {
@@ -135,42 +134,32 @@ float P22(float x, float y)
 
     float det = var_x * var_y - c_xy * c_xy ;
 
-//    return exp(88.73);
-
-    if (approx(det, 0, 0.0000000000001)) // "Dirac if plane"
-    {
-//        return float((x == 0) && (y == 0));
-
-        return float(approx(x, 0, 0.0001) && approx(y, 0, 0.0001));
-    }
-
     float arg_exp = -0.5 * ( x * x * var_y + y * y * var_x - 2.0* x * y * c_xy ) / det ;
 
-    float P22_ = 0.15915 * inversesqrt ( (det) ) * exp ( arg_exp );
+    float P22_ = 0.15915 * inversesqrt ( det ) * exp ( arg_exp );
+
+//    return float(P22_ < 1.6);
 
     return P22_;
 }
 
-float D_beckmann_bak(vec3 n) {
+float D_beckmann(vec3 n) {
     float x = -n.x / n.z;
     float y = -n.y / n.z;
 
-//    return dot(n, n);
 
     float P22_ = P22(x, y);
 
     float D_ = P22_ / (n.z * n.z * n.z * n.z); // Here, n.z is the same as dot(wn, wg) given in the formula
 
-//    return (approx(n.z, dot(n, toTanSpace(N)), 0) ? 1 : 0); WORKS ! PROOF
+//    return (approx(n.z, dot(n, toTanSpace(N)), 0) ? 1 : 0); // WORKS ! PROOF
 
 //    return float(isnan(P22_) || isinf(P22_));
-
-    return dot(n, getMesoTan());
 
     return D_;
 }
 
-float D_beckmann(vec3 n) {
+float D_beckmann_testbed(vec3 n) {
     float x = -n.x / n.z;
     float y = -n.y / n.z;
 
@@ -180,25 +169,21 @@ float D_beckmann(vec3 n) {
 
     float det = var_x * var_y - c_xy * c_xy ;
 
+    float P22_ = 0;
 
-    if (approx(det, 0, 0.0000000000001)) // "Dirac if plane"
-    {
-        return dot(n, getMesoTan());
+//    if (det < 0.00001) // "Dirac if plane"
+//    {
+//        P22_ = 0;
+//    }
+//    else
+//    {
+        float arg_exp = -0.5 * ( x * x * var_y + y * y * var_x - 2.0* x * y * c_xy ) / det ;
 
-//        return float(approx(x, 0, 0.0001) && approx(y, 0, 0.0001));
-    }
+        P22_ = 0.15915 * inversesqrt ( (det) ) * exp ( arg_exp );
+//    }
 
-//    det = max(1.0, det);
-
-    float arg_exp = -0.5 * ( x * x * var_y + y * y * var_x - 2.0* x * y * c_xy ) / det ;
-
-    float P22_ = 0.15915 * inversesqrt ( (det) ) * exp ( arg_exp );
 
     float D_ = P22_ / (n.z * n.z * n.z * n.z); // Here, n.z is the same as dot(wn, wg) given in the formula
-
-//    return (approx(n.z, dot(n, toTanSpace(N)), 0) ? 1 : 0); WORKS ! PROOF
-
-//    return float(isnan(P22_) || isinf(P22_));
 
     return D_;
 }
@@ -468,6 +453,12 @@ vec3 roughDiffuse() {
 vec3 dumbTest(vec3 self) {
 //    return fromTanSpace((getMesoTan()));
 
+//    return E_xn;
+
+//    return getMesoWorld();
+
+//    return vec3(dot(V, getMesoWorld()));
+
 //    return (E_yn < 0 ? vec3(E_yn) : vec3(1, 0, 0));
 
 //    return vec3(float(c_xy > 10));
@@ -477,7 +468,10 @@ vec3 dumbTest(vec3 self) {
 
 //    return vec3(P22(0, 0));
 
-//    return vec3(D_beckmann(vec3(0.0, 0.0, 1.0)));
+//    return E(getMesoWorld()) * 6.5;
+
+
+//    return vec3(D_beckmann(toTanSpace(V)));
 
 //    return vec3(1, 0, 0);
 
@@ -522,9 +516,11 @@ void main( void )
 
     vec3 pointH = normalize(pointL + V);
 
-    pointL = normalize(vec3(1, 0, 0));
+//    pointL = normalize(vec3(1, 0, 0));
 
     vec3 H = normalize(pointL + V);
+
+//    fragColor.xyz = vec3(D_beckmann(toTanSpace(H)));
 
 //    fragColor.xyz = vec3(roughSpecularPointLight(pointL)) * fresnel_schlick(texAlbedo, dot(pointL, H));
 //    fragColor.xyz = roughSpecularCubeMap();
@@ -535,12 +531,10 @@ void main( void )
 
 //    fragColor.xyz = roughDiffuse();
 
-    fragColor.xyz = vec3(roughSpecularPointLight(pointL));
+//    fragColor.xyz = vec3(roughSpecularPointLight(pointL));
 
-//    fragColor.xyz = texAlbedo*6.5*roughDiffuse();
-//    fragColor.xyz += ks*pointLight.color*roughSpecularPointLight(pointL)*fresnel_schlick(texAlbedo, dot(pointL, H));
-
-
+//    fragColor.xyz = 6.5*roughDiffuse();
+    fragColor.xyz = ks*pointLight.color*roughSpecularPointLight(pointL)*fresnel_schlick(ks, dot(pointL, H));
 
 //    float albedo = 6.5;
 //    fragColor.xyz = E(getMesoWorld()) * albedo;

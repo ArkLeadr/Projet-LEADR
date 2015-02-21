@@ -16,8 +16,8 @@ uniform mat4 world;
 
 void main( void )
 {
-    outData.pos =  vertex;
-    outData.normal = normalize(normal);
+    outData.pos =  (world * vec4(vertex, 1)).xyz;
+    outData.normal = (world * vec4(normal, 0)).xyz;
     outData.texcoord = texcoord;
-    outData.tangent = tangent;
+    outData.tangent = (world * vec4(tangent, 0)).xyz;
 }

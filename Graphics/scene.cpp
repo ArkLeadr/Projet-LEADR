@@ -55,6 +55,8 @@ void Scene::initScene() {
 //    mainModel.loadFromFile("SimpleModel/demo.dae");
 //    mainModel.loadFromFile("cubenorm.obj");
 
+//    mainModel.loadFromFile("pillow/Pillow_Obj.obj");
+
     basicLamp.loadFromFile("hi_sphere.obj");
 
     basicLampShader.addVertexShader("line.vert");
@@ -108,6 +110,7 @@ void Scene::initScene() {
     importLeadrTextures("wall002_hmap2_512x512.leadr1", "wall002_hmap2_512x512.leadr2", leadr1, leadr2);
 
 //    importLeadrTextures("wgnoise.leadr1", "wgnoise.leadr2", leadr1, leadr2);
+//    importLeadrTextures("pillow/silk_bump.leadr1", "pillow/silk_bump.leadr2", leadr1, leadr2);
 }
 
 void Scene::resize(int width, int height)
@@ -167,6 +170,8 @@ void Scene::render()
     mat4 cubeTransformation = mat4::Identity();
 //        cubeTransformation.translate(5,0,0);
 //        cubeTransformation.rotate(normalize({0.f, 0.f, 1.f}), -90.f);
+
+//    cubeTransformation.scale(0.01, 0.01, 0.01);
 
     /* Get your lights ready */
     DirLight dirLight{vec3{2, 2, 2}, vec3{0, -1, -1}};

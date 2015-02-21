@@ -36,7 +36,12 @@ class arkMenuBar : public QMenuBar, public arkMediatorWidget
     public slots :
     
     void loadModel();
+    
+    void loadLEADRTexture();
     void loadTexture();
+    void loadDispMap();
+    void loadNormalMap();
+
     void loadEnvTexture();
     void loadIrradianceMap();
     

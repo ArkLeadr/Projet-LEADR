@@ -1,11 +1,11 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-
-
 #include "scene.h"
 #include <QKeyEvent>
 #include <string>
+
+#include "leadr_tools_import.h"
 
 #ifdef USE_SDL2
 #include "Sdl2GUI/rendererinterface.h"
@@ -45,8 +45,13 @@ public:
     void setDispFactor( float disp_factor );
     void setNbSamples( int nb_samples );
     
-    void loadModel(const std::string &model_path );
-    void loadTexture( const std::vector< std::string > & tex_paths );
+    void loadModel( const std::string &model_path );
+    
+    void loadLEADRTexture( const std::string & leadr1, const std::string & leadr2 );
+    void loadTexture( const std::string & texture);
+    void loadDispMap( const std::string & disp_map );
+    void loadNormalMap( const std::string & normal_map );
+    
     void loadEnvTexture( const std::string & env_path );
     void loadIrradianceMap( const std::string & irr_path );
     

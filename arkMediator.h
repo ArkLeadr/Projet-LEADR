@@ -31,7 +31,12 @@ class arkMediator : public arkAbstractMediator
     virtual void setNbSamples( int nb_samples );
     
     virtual void loadModel( const std::string& model_path );
-    virtual void loadTexture( const std::vector< std::string > & tex_paths );
+
+    virtual void loadLEADRTexture( const std::string & leadr1, const std::string & leadr2 );
+    virtual void loadTexture( const std::string & texture);
+    virtual void loadDispMap( const std::string & disp_map );
+    virtual void loadNormalMap( const std::string & normal_map );
+    
     virtual void loadEnvTexture( const std::string & env_path );
     virtual void loadIrradianceMap( const std::string & irr_path );
     

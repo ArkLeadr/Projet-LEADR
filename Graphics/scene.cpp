@@ -205,9 +205,15 @@ void Scene::render()
 
 
     glUniform1f(glGetUniformLocation(s.getProgramId(), "userDisplacementFactor"), userDisplacementFactor);
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "wireframe"), wireframe);
     glUniform1f(glGetUniformLocation(s.getProgramId(), "tessFactor"), tessFactor);
     glUniform1i(glGetUniformLocation(s.getProgramId(), "nbSample"), nbSample);
+
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "filtering"), filtering);
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "diffuse"), diffuse);
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "specularDirect"), specularDirect);
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "specularEnv"), specularEnv);
+
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "currentBRDF"), currentBRDF);
 
 
     /* SHADOW PASS */

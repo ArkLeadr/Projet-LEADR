@@ -453,14 +453,34 @@ void Renderer::setDepthRendering()
     
 }
 
-void Renderer::setLEADRMode( bool leadr_mode )
+void Renderer::setBRDF( int brdf_choice )
 {
-    
+    m_scene->currentBRDF = brdf_choice;
 }
 
 void Renderer::setNormalMode( bool normal_mode )
 {
     
+}
+
+void Renderer::setFilteringMode(bool enabled)
+{
+    m_scene->filtering = enabled;
+}
+
+void Renderer::setDiffuseEnabled(bool enabled)
+{
+    m_scene->diffuse = enabled;
+}
+
+void Renderer::setSpecularDirectEnabled(bool enabled)
+{
+    m_scene->specularDirect = enabled;
+}
+
+void Renderer::setSpecularEnvEnabled(bool enabled)
+{
+    m_scene->specularEnv = enabled;
 }
 
 /******************************************************************************/

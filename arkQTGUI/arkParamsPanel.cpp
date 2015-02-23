@@ -27,9 +27,10 @@ arkMediatorWidget( mediator_shptr )
     m_nbSamples = new QSpinBox();
     m_disp_factor->setValue(0);
 
-    m_leadr_mode = new QComboBox();
-    m_leadr_mode->addItem( tr("Enabled") );
-    m_leadr_mode->addItem( tr("Disabled") );
+    m_brdf_choice = new QComboBox();
+    m_brdf_choice->addItem( tr("LEADR") );
+    m_brdf_choice->addItem( tr("Classic Microfacets") );
+    m_brdf_choice->addItem( tr("Classic Phong") );
     
     m_normal_mode = new QComboBox();
     m_normal_mode->addItem( tr("Enabled") );
@@ -52,14 +53,32 @@ arkMediatorWidget( mediator_shptr )
     m_nbSamples->setValue(1);
     m_nbSamples->setMinimum(1);
     m_nbSamples->setMaximum(256);
+
+    m_filtering = new QCheckBox("Filtering", this);
+
+    m_diffuse = new QCheckBox("Diffuse", this);
+    m_specular_direct = new QCheckBox("Specular PointLights", this);
+    m_specular_env = new QCheckBox("Specular Environment", this);
+
+    m_filtering->setCheckState(Qt::Checked);
+
+    m_diffuse->setCheckState(Qt::Checked);
+    m_specular_direct->setCheckState(Qt::Checked);
+    m_specular_env->setCheckState(Qt::Checked);
     
-    m_layout->addWidget( new QLabel( tr("LEADR mode : ") ), 6, 0, 2, 6 );
-    m_layout->addWidget( m_leadr_mode, 6, 6, 2, 4 );
+    m_layout->addWidget( new QLabel( tr("BRDF : ") ), 6, 0, 2, 6 );
+    m_layout->addWidget( m_brdf_choice, 6, 6, 2, 4 );
 
     m_layout->addWidget( new QLabel( tr("Normal mode : ") ), 8, 0, 2, 6 );
     m_layout->addWidget( m_normal_mode, 8, 6, 2, 4 );
+
+    m_layout->addWidget( m_filtering, 9, 0, 2, 6 );
+
+    m_layout->addWidget( m_diffuse, 10, 0, 2, 6 );
+    m_layout->addWidget( m_specular_direct, 11, 0, 2, 6 );
+    m_layout->addWidget( m_specular_env, 11, 6, 2, 6 );
     
-    m_layout->addWidget( m_reload_button, 10, 0, 2, 6 );
+    m_layout->addWidget( m_reload_button, 12, 0, 2, 6 );
 
     connect
     ( m_tesselation_factor, SIGNAL( valueChanged(int) ), this, SLOT( updateTesselationFactor(int) ) );
@@ -68,13 +87,19 @@ arkMediatorWidget( mediator_shptr )
     
     connect( m_nbSamples, SIGNAL( valueChanged(int) ), this, SLOT( updateNbSamples(int) ) );
     
-    connect( m_leadr_mode, SIGNAL( currentIndexChanged(int) ), this, SLOT( setLEADRMode(int) ) );
+    connect( m_brdf_choice, SIGNAL( currentIndexChanged(int) ), this, SLOT( setBRDF(int) ) );
     
     connect( m_normal_mode, SIGNAL( currentIndexChanged(int) ), this, SLOT( setNormalMode(int) ) );
 
     connect( m_reload_button, SIGNAL( released() ), this, SLOT( reloadShader() ) );
 
     QObject::connect(m_reload_shortcut, SIGNAL(activated()), this, SLOT( reloadShader() ) );
+
+    QObject::connect ( m_filtering, SIGNAL(stateChanged(int)), this, SLOT(setFilteringMode(int)) );
+
+    connect ( m_diffuse, SIGNAL(stateChanged(int)), this, SLOT(setDiffuseEnabled(int)) );
+    connect ( m_specular_direct, SIGNAL(stateChanged(int)), this, SLOT(setSpecularDirectEnabled(int)) );
+    connect ( m_specular_env, SIGNAL(stateChanged(int)), this, SLOT(setSpecularEnvEnabled(int)) );
 }
 
 arkParamsPanel::~arkParamsPanel()
@@ -82,9 +107,9 @@ arkParamsPanel::~arkParamsPanel()
     
 }
 
-void arkParamsPanel::setLEADRMode( int index )
+void arkParamsPanel::setBRDF( int index )
 {
-    m_mediator_shptr->setLEADRMode( index == 0 ? true : false );
+    m_mediator_shptr->setBRDF( index );
 }
 
 void arkParamsPanel::setNormalMode( int index )
@@ -111,3 +136,32 @@ void arkParamsPanel::reloadShader()
 {
     m_mediator_shptr->reloadShader();
 }
+
+void arkParamsPanel::setFilteringMode( int state )
+{
+    bool enabled = (state == Qt::Checked);
+
+    m_mediator_shptr->setFilteringMode(enabled);
+}
+
+void arkParamsPanel::setDiffuseEnabled(int state )
+{
+    bool enabled = (state == Qt::Checked);
+
+    m_mediator_shptr->setDiffuseEnabled(enabled);
+}
+
+void arkParamsPanel::setSpecularDirectEnabled( int state )
+{
+    bool enabled = (state == Qt::Checked);
+
+    m_mediator_shptr->setSpecularDirectEnabled(enabled);
+}
+
+void arkParamsPanel::setSpecularEnvEnabled(int state)
+{
+    bool enabled = (state == Qt::Checked);
+
+    m_mediator_shptr->setSpecularEnvEnabled(enabled);
+}
+

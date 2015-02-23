@@ -99,9 +99,9 @@ void arkMediator::setTexcoordRendering()
     m_renderer->setFinalFboTarget(2);
 }
 
-void arkMediator::setLEADRMode( bool leadr_mode )
+void arkMediator::setBRDF(int brdf_choice )
 {
-    m_renderer->setLEADRMode( leadr_mode );
+    m_renderer->setBRDF( brdf_choice );
 }
 
 void arkMediator::setNormalMode( bool normal_mode )
@@ -112,6 +112,26 @@ void arkMediator::setNormalMode( bool normal_mode )
 void arkMediator::reloadShader()
 {
     m_renderer->reloadShader();
+}
+
+void arkMediator::setFilteringMode(bool enabled)
+{
+    m_renderer->setFilteringMode(enabled);
+}
+
+void arkMediator::setDiffuseEnabled(bool enabled)
+{
+    m_renderer->setDiffuseEnabled(enabled);
+}
+
+void arkMediator::setSpecularDirectEnabled(bool enabled)
+{
+    m_renderer->setSpecularDirectEnabled(enabled);
+}
+
+void arkMediator::setSpecularEnvEnabled(bool enabled)
+{
+    m_renderer->setSpecularEnvEnabled(enabled);
 }
 
 

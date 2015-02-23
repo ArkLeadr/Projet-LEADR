@@ -54,12 +54,17 @@ public:
     
     void loadEnvTexture( const std::string & env_path );
     void loadIrradianceMap( const std::string & irr_path );
+
+    void setFilteringMode(bool enabled);
+    void setDiffuseEnabled(bool enabled);
+    void setSpecularDirectEnabled(bool enabled);
+    void setSpecularEnvEnabled(bool enabled);
     
     void setStandardRendering();
     void setWireframeRendering();
     void setDepthRendering();
     
-    void setLEADRMode( bool leadr_mode );
+    void setBRDF(int brdf_choice );
     void setNormalMode( bool normal_mode );
     ~Renderer(){};
     /** **/

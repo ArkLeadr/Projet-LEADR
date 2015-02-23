@@ -40,10 +40,15 @@ class arkAbstractMediator
     virtual void setNormalRendering() = 0;
     virtual void setTexcoordRendering() = 0;
 
-    virtual void setLEADRMode( bool leadr_mode ) = 0;
+    virtual void setBRDF( int brdf_choice ) = 0;
     virtual void setNormalMode( bool normal_mode ) = 0;
 
     virtual void reloadShader() = 0;
+
+    virtual void setFilteringMode(bool enabled) = 0;
+    virtual void setDiffuseEnabled(bool enabled) = 0;
+    virtual void setSpecularDirectEnabled(bool enabled) = 0;
+    virtual void setSpecularEnvEnabled(bool enabled) = 0;
 
     virtual void initializeGL() = 0;
     virtual void resizeGL( int width, int height ) = 0;

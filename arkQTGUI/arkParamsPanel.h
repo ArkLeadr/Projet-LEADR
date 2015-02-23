@@ -17,6 +17,8 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QShortcut>
+#include <QRadioButton>
+#include <QCheckBox>
 #include "arkMediatorWidget.h"
 
 class arkParamsPanel;
@@ -43,21 +45,31 @@ class arkParamsPanel : public QWidget, public arkMediatorWidget
     QSpinBox * m_nbSamples;
     QSpinBox * m_disp_factor;
     
-    QComboBox * m_leadr_mode;
+    QComboBox * m_brdf_choice;
     QComboBox * m_normal_mode;
 
     QPushButton * m_reload_button;
 
     QShortcut *m_reload_shortcut;
+
+    QCheckBox * m_filtering;
+
+    QCheckBox * m_diffuse;
+    QCheckBox * m_specular_direct;
+    QCheckBox * m_specular_env;
     
     public slots :
     
-    void setLEADRMode(int);
+    void setBRDF(int);
     void setNormalMode(int);
     void updateTesselationFactor(int);
     void updateNbSamples(int);
     void updateDispFactor(int);    
     void reloadShader();
+    void setFilteringMode(int state);
+    void setDiffuseEnabled(int state);
+    void setSpecularDirectEnabled(int state);
+    void setSpecularEnvEnabled(int state);
 };
 
 #endif /* defined(__arkGUI__arkParamsPanel__) */

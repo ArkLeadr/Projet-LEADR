@@ -107,6 +107,14 @@ public:
 
     float tessFactor;
     int nbSample;
+
+    bool filtering = true;
+
+    bool diffuse = true;
+    bool specularDirect = true;
+    bool specularEnv = true;
+
+    int currentBRDF = 0;
 };
 
 #endif // SCENETORENAME_H

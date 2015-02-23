@@ -42,10 +42,12 @@ uniform vec3 ks;
 uniform float shininess;
 
 //UI Communication Uniforms
-bool filtering = true;
-bool diffuse = true;
-bool specularDirect = true;
-bool specularEnv = true;
+uniform bool filtering;
+uniform bool diffuse;
+uniform bool specularDirect;
+uniform bool specularEnv;
+
+uniform int currentBRDF;
 
 float roughnessOffset = 0;
 
@@ -617,55 +619,42 @@ void main( void )
 
     vec3 finalColor = vec3(0);
 
-    if (specularDirect) {
-        fr += roughSpecularPointLight(pointL) * fresnel_schlick(0.8, LdotH);
+    if (currentBRDF == 0) {
+        if (specularDirect) {
+            fr += roughSpecularPointLight(pointL) * fresnel_schlick(0.8, LdotH);
 
-        finalColor += max(0, dot(N, L)) * fr * vec3(1);
+            finalColor += max(0, dot(N, L)) * fr * vec3(1);
+        }
+
+        if (specularEnv) {
+            finalColor += roughSpecularCubeMap() * 0.5;
+        }
+
+        if (diffuse) {
+            finalColor += 6.5 * roughDiffuse();
+        }
     }
+    else if (currentBRDF == 1) {
+        float alpha_b = 0.3;
 
-    if (specularEnv) {
-        finalColor += roughSpecularCubeMap() * 0.5;
+        float F_ = fresnel_schlick(0.8, LdotH);
+        float D_ = D_Beckmann_1D_Walter07(alpha_b, NdotH);
+//        float D_ = D_Beckmann_1D_Schlick94(alpha_b, NdotH);
+        float G_ = G1_Beckmann_1D_Walter07(alpha_b, NdotV, NdotH) * G1_Beckmann_1D_Walter07(alpha_b, NdotL, NdotH);
+
+        fr = (F_ * D_ * G_) / (4 * abs(dot(N, L)) * abs(dot(N, V)));
+
+        finalColor = vec3(fr) * clamp(NdotL, 0, 1);
     }
+    else if (currentBRDF == 2) {
 
-    if (diffuse) {
-        finalColor += 6.5 * roughDiffuse();
-    }
-
-    if (!gl_FrontFacing) {
-        fragColor.xyz = vec3(0);
-    }
-
-
-
-    if (!gl_FrontFacing) {
-        fragColor.xyz = vec3(0);
     }
     else {
-//        fragColor.xyz = NdotL * vec3(fresnel_schlick(0.8, LdotH)) * vec3(0.72549019607, 0.94901960784, 1.0);
 
-//        float alpha_b = 0.3;
-
-//        float F_ = fresnel_schlick(0.8, LdotH);
-//        float D_ = D_Beckmann_1D_Walter07(alpha_b, NdotH);
-////        float D_ = D_Beckmann_1D_Schlick94(alpha_b, NdotH);
-//        float G_ = G1_Beckmann_1D_Walter07(alpha_b, NdotV, NdotH) * G1_Beckmann_1D_Walter07(alpha_b, NdotL, NdotH);
-
-//        float fr = (F_ * D_ * G_) / (4 * abs(dot(N, L)) * abs(dot(N, V)));
-
-//        fragColor.xyz = vec3(fr) * clamp(NdotL, 0, 1);
     }
 
+
 //    fragColor.xyz += vec3(0.05); // FAKE AMBIANT
-
-
-//    fragColor.xyz = roughDiffuse();
-
-//    fragColor.xyz = vec3(disp);
-
-//    fragColor.xyz = vec3(roughSpecularPointLight(pointL));
-
-//    fragColor.xyz = 6.5 * roughDiffuse();
-//    fragColor.xyz = ks*pointLight.color*roughSpecularPointLight(pointL)*fresnel_schlick(0.8, dot(pointL, H));
 
 //    float albedo = 6.5;
 //    fragColor.xyz = E(getMesoWorld()) * albedo;

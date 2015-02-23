@@ -42,6 +42,7 @@ struct outputPatch
 
 
 
+ float edgesLengthSum = 0;
 
 
 /*
@@ -101,44 +102,24 @@ struct outputPatch
      oPatch.worldPos_B111 = (oPatch.worldPos_B021 + oPatch.worldPos_B012 + oPatch.worldPos_B102 +
                            oPatch.worldPos_B201 + oPatch.worldPos_B210 + oPatch.worldPos_B120) / 6.0;
      oPatch.worldPos_B111 += (oPatch.worldPos_B111 - Center) / 2.0;
+
+
+     edgesLengthSum += abs(length(oPatch.worldPos_B030 - oPatch.worldPos_B003));
+     edgesLengthSum += abs(length(oPatch.worldPos_B003 - oPatch.worldPos_B300));
+     edgesLengthSum += abs(length(oPatch.worldPos_B300 - oPatch.worldPos_B030));
  }
 
 
  float GetTessLevel(float Distance0, float Distance1)
  {
-     float sum = 0;
-     vec3 t[10];
-     t[0] = oPatch.worldPos_B030;
-     t[1] = oPatch.worldPos_B021;
-     t[2] = oPatch.worldPos_B012;
-     t[3] = oPatch.worldPos_B003;
-     t[4] = oPatch.worldPos_B102;
-     t[5] = oPatch.worldPos_B201;
-     t[6] = oPatch.worldPos_B300;
-     t[7] = oPatch.worldPos_B210;
-     t[8] = oPatch.worldPos_B120;
-     t[9] = oPatch.worldPos_B111;
-     for(int i = 0; i<9; i++)
-     {
-        sum += abs(length(t[i+1]-t[i]));
-     }
+     float tessLevel = tessFactor * edgesLengthSum / ((Distance0 + Distance1) / 2.0);
 
-    return tessFactor*sum/((Distance0+Distance1)/2);
-
+     return tessLevel;
  }
 
 
 void main(void)
 {
-    float gTessellationLevel = 1;
-
-//    for (int i = 0 ; i < 3 ; i++) {
-//       oPatch.normal[i] = inData[i].normal;
-//       oPatch.texCoord[i] = inData[i].texcoord;
-//       oPatch.tangent[i] = inData[i].tangent;
-//    }
-
-
     //UNROLL LOOP FOR MS INTEL DRIVER COMPLIANCE...
     oPatch.normal[0] = inData[0].normal;
     oPatch.texCoord[0] = inData[0].texcoord;

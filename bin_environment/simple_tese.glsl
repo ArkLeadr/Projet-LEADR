@@ -13,14 +13,12 @@ out Data {
 
 // Uniform
 
-uniform mat4 MVP;
 uniform mat4 view;
 uniform mat4 projection;
 
 uniform mat4 world;
 
-uniform sampler2D dispMapSampler;
-
+uniform sampler2D leadr2; //~y², h
 uniform float userDisplacementFactor;
 
 
@@ -63,6 +61,8 @@ void main()
     outData.normal = interpolate3D(oPatch.normal[0], oPatch.normal[1], oPatch.normal[2]);
     outData.tangent = interpolate3D(oPatch.tangent[0], oPatch.tangent[1], oPatch.tangent[2]);
 
+
+
     float u = gl_TessCoord.x;
     float v = gl_TessCoord.y;
     float w = gl_TessCoord.z;
@@ -92,12 +92,11 @@ void main()
                     oPatch.worldPos_B003 * v
               ;
 
-   float disp = texture(dispMapSampler,outData.texcoord).x;
+   float disp = texture(leadr2, outData.texcoord).y;
     outData.position +=  outData.normal*disp*userDisplacementFactor;
     gl_Position = projection * view * vec4(outData.position, 1.0);
 
 }
-
 
 
 

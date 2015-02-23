@@ -192,6 +192,10 @@ void Scene::render()
     leadr1.bindToTarget(GL_TEXTURE4);
     leadr2.bindToTarget(GL_TEXTURE5);
 
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "sphericalMapSampler"), 6);
+
+    envmap.bindTextureToTarget(GL_TEXTURE6);
+
     glUniform1i(glGetUniformLocation(s.getProgramId(), "cubeMapSampler"), 0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap.getId());

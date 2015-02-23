@@ -9,6 +9,8 @@ uniform samplerCube cubeMapSampler;
 
 uniform sampler2D dispMapSampler;
 
+uniform sampler2D sphericalMapSampler;
+
 uniform mat4 lightMVP;
 
 in Data {
@@ -136,7 +138,7 @@ void computeLeadrStatistics()
 
 
 
-    float baseRoughnessOffset = roughnessOffset + 0.05;
+    float baseRoughnessOffset = roughnessOffset + 0.0000001; // Try to ensure no zero divide or whatever
 
     E_xn    = stats1.x;
     E_yn    = stats1.y;
@@ -283,6 +285,21 @@ const float sampleLength = 0.9;
 const float p[5] = float[5](-1.8, -0.9, 0, 0.9, 1.8);
 const float w[5] = float[5](0.0725, 0.2443, 0.3663, 0.2443, 0.0725);
 
+vec3 fetchSphericalMap(vec3 v, float LOD) {
+    float norm = inversesqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+
+    float DDx = v.x * norm;
+    float DDy = v.y * norm;
+    float DDz = v.z * norm;
+
+    float r = 0.159154943 * acos(DDz) * inversesqrt(DDx*DDx + DDy*DDy);
+
+    float sb_u = 0.5 + DDx * r;
+    float sb_v = 0.5 + DDy * r;
+
+    return textureLod(sphericalMapSampler, vec2(sb_u, sb_v), LOD).rgb;
+}
+
 /* TODO : see how to integrate smith terms in this equation */
 vec3 roughSpecularCubeMap() {
     float sigma_x = sqrt(var_x);
@@ -327,7 +344,8 @@ vec3 roughSpecularCubeMap() {
             // LOD in cube map
             float LOD = 0.72*log(J) + LODoffset ;
             // radiance
-            vec3 I_ = textureLod(cubeMapSampler, R, LOD).rgb;
+//            vec3 I_ = textureLod(cubeMapSampler, R, LOD).rgb;
+            vec3 I_ = fetchSphericalMap(R, LOD);
             // sum up
             S += w[j]*w[k] * S_ ;
             I += w[j]*w[k] * S_ * I_ ;
@@ -636,7 +654,7 @@ void main( void )
         }
 
         if (specularEnv) {
-            finalColor += roughSpecularCubeMap() * fresnel_schlick(fresnel0, NdotV);
+            finalColor += roughSpecularCubeMap();// * fresnel_schlick(fresnel0, NdotV);
         }
 
         if (diffuse) {

@@ -137,6 +137,12 @@ void EnvMap::render(const mat4 &projection, const mat4 &pureView) {
     glDepthMask(GL_TRUE);
 }
 
+void EnvMap::bindTextureToTarget(GLuint target) const
+{
+    glActiveTexture(target);
+    glBindTexture(GL_TEXTURE_2D, m_tex);
+}
+
 int EnvMap::channelToRgbFormatHDR(int numChannels) const {
     switch(numChannels) {
     case 1:
@@ -205,7 +211,7 @@ bool EnvMap::loadAsSphericalFloat(int width, float* imageData) {
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

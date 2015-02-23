@@ -38,6 +38,7 @@ public:
 
     void render(const mat4& projection, const mat4& pureView);
 
+    void bindTextureToTarget(GLuint target) const;
 private:
     int channelToRgbFormatHDR(int numChannels) const;
 

@@ -62,15 +62,6 @@ void Scene::initScene() {
 //    dogeMap.loadFromMaterialColor(Color3f{0, 0, 0});
 
 
-    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_X, "Ryfjallet_512/posx.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_X, "Ryfjallet_512/negx.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Y, "Ryfjallet_512/posy.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Y, "Ryfjallet_512/negy.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::POSITIVE_Z, "Ryfjallet_512/posz.jpg");
-    cubemap.loadFaceFromFile(Cubemap::Face::NEGATIVE_Z, "Ryfjallet_512/negz.jpg");
-
-    skybox.feedCubemap(cubemap);
-
     envmap.loadFromFile("grace_probe.float");
 
     fbo.reset(new FBO(m_width, m_height, 3));
@@ -195,10 +186,6 @@ void Scene::render()
     glUniform1i(glGetUniformLocation(s.getProgramId(), "sphericalMapSampler"), 6);
 
     envmap.bindTextureToTarget(GL_TEXTURE6);
-
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "cubeMapSampler"), 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap.getId());
 
 
     glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.direction"), 1, dirLight.m_direction.data());

@@ -79,8 +79,6 @@ public:
     Texture normalMap;
     Texture dogeMap;
 
-    Cubemap cubemap;
-
     EnvMap envmap;
 
     Skybox skybox;

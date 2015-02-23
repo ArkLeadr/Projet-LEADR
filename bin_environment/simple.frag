@@ -5,8 +5,6 @@
 uniform sampler2D texSampler;
 uniform sampler2D normalMapSampler;
 
-uniform samplerCube cubeMapSampler;
-
 uniform sampler2D dispMapSampler;
 
 uniform sampler2D sphericalMapSampler;
@@ -315,7 +313,7 @@ vec3 roughSpecularCubeMap() {
 //    float LODoffset = -1.48 + log2(sampleLength*max(sigma_x, sigma_y)* float(textureSize(cubeMapSampler, 0).x));
 
     // Replace -1.48 by 0.5 as said in the supplemental
-    float LODoffset = 0.5 + log2(sampleLength*max(sigma_x, sigma_y)* float(textureSize(cubeMapSampler, 0).x));
+    float LODoffset = 0.5 + log2(sampleLength*max(sigma_x, sigma_y) * float(textureSize(sphericalMapSampler, 0).x));
 
     float S = 0;
     vec3 I = vec3(0);

@@ -7,7 +7,7 @@ y = x';
 
 [X,Y] = meshgrid(x, y);
 
-computeStatistics(dx, dy, dxx, dyy, dxy);
+computeStatistics(dx, dy, dxx, dyy, dxy, 0.1);
 
 % z = exp(-(X.^2+Y.^2)/2);
 

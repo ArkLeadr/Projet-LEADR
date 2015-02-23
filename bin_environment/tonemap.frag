@@ -31,11 +31,15 @@ float luminance(vec3 color) {
     return color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722;
 }
 
+#define TONEMAP 0
+
 void main( void )
 {
     vec2 screenTexCoord = vec2(gl_FragCoord.x/screenWidth, gl_FragCoord.y/screenHeight);
 
     vec3 rgbColor = texture(texSampler, screenTexCoord).rgb;
+
+#if TONEMAP
 
     vec3 xyzColor = RGBtoXYZ * rgbColor;
 
@@ -53,9 +57,14 @@ void main( void )
 //    float g = pow((rgbColor.g / Lw), c) * Ld;
 //    float b = pow((rgbColor.b / Lw), c) * Ld;
 
-    vec3 rgbColorTonemapped = pow(pow(rgbColor * Lw, vec3(saturation)) * Ld, vec3(1/gamma));
+    vec3 rgbColorTonemapped = pow(rgbColor * Lw, vec3(saturation)) * Ld;
 
-    fragColor = vec4(rgbColorTonemapped, 1);
+    rgbColor = rgbColorTonemapped;
+#endif
+
+    vec3 rgbColorGammaCorrected = pow(rgbColor, vec3(1.0/gamma));
+
+    fragColor = vec4(rgbColorGammaCorrected, 1);
 
 
 //    fragColor = vec4(vec3(rgbColor.y), 1);

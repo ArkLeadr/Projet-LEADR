@@ -333,9 +333,10 @@ bool Renderer::initGL()
 
     glEnable(GL_DEPTH_TEST);
 
-    /*glFrontFace(GL_CCW);
-    glCullFace(GL_BACK);
-    glEnable(GL_CULL_FACE);*/
+    glFrontFace(GL_CW);
+//    glCullFace(GL_BACK);
+
+//    glEnable(GL_CULL_FACE);
 
     return true;
 }

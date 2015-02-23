@@ -44,10 +44,12 @@ public:
     void setTesselationFactor( float tesselation_factor );
     void setDispFactor( float disp_factor );
     void setNbSamples( int nb_samples );
+    void setRoughnessOffset(double roughnessOffset);
+    void setFresnel0( double fresnel0 );
     
     void loadModel( const std::string &model_path );
     
-    void loadLEADRTexture( const std::string & leadr1, const std::string & leadr2 );
+    void loadLEADRTexture( const std::string & leadr );
     void loadTexture( const std::string & texture);
     void loadDispMap( const std::string & disp_map );
     void loadNormalMap( const std::string & normal_map );
@@ -59,6 +61,8 @@ public:
     void setDiffuseEnabled(bool enabled);
     void setSpecularDirectEnabled(bool enabled);
     void setSpecularEnvEnabled(bool enabled);
+    void setDiffuseDirectEnabled(bool enabled);
+    void setDiffuseEnvEnabled(bool enabled);
     
     void setStandardRendering();
     void setWireframeRendering();

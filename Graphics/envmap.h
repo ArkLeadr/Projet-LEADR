@@ -44,6 +44,7 @@ private:
     int channelToSRgbFormat(int numChannels) const;
 
     bool loadAsSpherical(Image& image);
+    bool loadAsSphericalFloat(int width, float *imageData);
 
     int determineTypeFromDimension(int width, int height);
 };

@@ -404,14 +404,24 @@ void Renderer::setNbSamples( int nb_samples )
     m_scene->nbSample = nb_samples;
 }
 
+void Renderer::setRoughnessOffset(double roughnessOffset)
+{
+    m_scene->roughnessOffset = roughnessOffset;
+}
+
+void Renderer::setFresnel0(double fresnel0)
+{
+    m_scene->fresnel0 = fresnel0;
+}
+
 void Renderer::loadModel( const std::string& model_path )
 {
     m_scene->mainModel.loadFromFile(model_path);
 }
 
-void Renderer::loadLEADRTexture( const std::string & leadr1, const std::string & leadr2 )
+void Renderer::loadLEADRTexture( const std::string & leadr )
 {
-    importLeadrTextures(leadr1.c_str(), leadr2.c_str(), m_scene->leadr1, m_scene->leadr2);
+    importLeadrTexture(leadr.c_str(), m_scene->leadr1, m_scene->leadr2);
 }
 
 void Renderer::loadTexture( const std::string & texture)
@@ -481,6 +491,16 @@ void Renderer::setSpecularDirectEnabled(bool enabled)
 void Renderer::setSpecularEnvEnabled(bool enabled)
 {
     m_scene->specularEnv = enabled;
+}
+
+void Renderer::setDiffuseDirectEnabled(bool enabled)
+{
+    m_scene->diffuseDirect = enabled;
+}
+
+void Renderer::setDiffuseEnvEnabled(bool enabled)
+{
+    m_scene->diffuseEnv = enabled;
 }
 
 /******************************************************************************/

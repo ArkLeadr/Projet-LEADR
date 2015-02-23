@@ -23,10 +23,12 @@ class arkAbstractMediator
     virtual void setTesselationFactor( float tesselation_factor ) = 0;
     virtual void setDispFactor( float disp_factor ) = 0;
     virtual void setNbSamples( int nb_samples ) = 0;
+    virtual void setRoughnessOffset( double roughnessOffset ) = 0;
+    virtual void setFresnel0( double fresnel0 ) = 0;
     
     virtual void loadModel( const std::string& model_path ) = 0;
     
-    virtual void loadLEADRTexture( const std::string & leadr1, const std::string & leadr2 ) = 0;
+    virtual void loadLEADRTexture( const std::string & leadr ) = 0;
     virtual void loadTexture( const std::string & texture) = 0;
     virtual void loadDispMap( const std::string & disp_map ) = 0;
     virtual void loadNormalMap( const std::string & normal_map ) = 0;
@@ -49,6 +51,8 @@ class arkAbstractMediator
     virtual void setDiffuseEnabled(bool enabled) = 0;
     virtual void setSpecularDirectEnabled(bool enabled) = 0;
     virtual void setSpecularEnvEnabled(bool enabled) = 0;
+    virtual void setDiffuseDirectEnabled(bool enabled) = 0;
+    virtual void setDiffuseEnvEnabled(bool enabled) = 0;
 
     virtual void initializeGL() = 0;
     virtual void resizeGL( int width, int height ) = 0;

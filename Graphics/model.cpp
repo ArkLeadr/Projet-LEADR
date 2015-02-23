@@ -295,12 +295,6 @@ void Model::drawAsTriangles(const mat4 &projection, const mat4 &view, const mat4
         }
     }
 
-//    for (const Mesh& mesh : m_meshes) {
-//        if (s) {
-//            s->sendMaterial(m_materials[mesh.m_materialIndex]);
-//        }
-//        mesh.drawAsTriangles();
-//    }
 }
 
 

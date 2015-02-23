@@ -57,6 +57,13 @@ class arkParamsPanel : public QWidget, public arkMediatorWidget
     QCheckBox * m_diffuse;
     QCheckBox * m_specular_direct;
     QCheckBox * m_specular_env;
+    QCheckBox * m_diffuse_direct;
+    QCheckBox * m_diffuse_env;
+
+
+    QDoubleSpinBox * m_roughness_offset;
+
+    QDoubleSpinBox * m_fresnel0;
     
     public slots :
     
@@ -64,12 +71,16 @@ class arkParamsPanel : public QWidget, public arkMediatorWidget
     void setNormalMode(int);
     void updateTesselationFactor(int);
     void updateNbSamples(int);
-    void updateDispFactor(int);    
+    void updateDispFactor(int);
+    void updateRoughnessOffset(double);
     void reloadShader();
     void setFilteringMode(int state);
     void setDiffuseEnabled(int state);
     void setSpecularDirectEnabled(int state);
     void setSpecularEnvEnabled(int state);
+    void updateFresnel0(double);
+    void setDiffuseDirectEnabled(int state);
+    void setDiffuseEnvEnabled(int state);
 };
 
 #endif /* defined(__arkGUI__arkParamsPanel__) */

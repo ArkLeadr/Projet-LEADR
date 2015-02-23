@@ -71,7 +71,7 @@ void Scene::initScene() {
 
     skybox.feedCubemap(cubemap);
 
-    envmap.loadFromFile("grace_probe.hdr");
+    envmap.loadFromFile("grace_probe.float");
 
     fbo.reset(new FBO(m_width, m_height, 3));
 
@@ -87,8 +87,10 @@ void Scene::initScene() {
 //    importLeadrTextures("disp_data/wall002_hmap2_512x512.leadr1", "disp_data/wall002_hmap2_512x512.leadr2", leadr1, leadr2);
 
 //    importLeadrTextures("wgnoise.leadr1", "wgnoise.leadr2", leadr1, leadr2);
-    importLeadrTextures("pillow/silk_bump.leadr1", "pillow/silk_bump.leadr2", leadr1, leadr2);
+//    importLeadrTextures("pillow/silk_bump.leadr1", "pillow/silk_bump.leadr2", leadr1, leadr2);
 //    importLeadrTextures("moon_sea.leadr1", "moon_sea.leadr2", leadr1, leadr2);
+
+    importLeadrTexture("pillow/silk_bump.leadr", leadr1, leadr2);
 }
 
 void Scene::resize(int width, int height)
@@ -207,11 +209,15 @@ void Scene::render()
     glUniform1f(glGetUniformLocation(s.getProgramId(), "userDisplacementFactor"), userDisplacementFactor);
     glUniform1f(glGetUniformLocation(s.getProgramId(), "tessFactor"), tessFactor);
     glUniform1i(glGetUniformLocation(s.getProgramId(), "nbSample"), nbSample);
+    glUniform1f(glGetUniformLocation(s.getProgramId(), "roughnessOffset"), roughnessOffset);
+    glUniform1f(glGetUniformLocation(s.getProgramId(), "fresnel0"), fresnel0);
 
     glUniform1i(glGetUniformLocation(s.getProgramId(), "filtering"), filtering);
     glUniform1i(glGetUniformLocation(s.getProgramId(), "diffuse"), diffuse);
     glUniform1i(glGetUniformLocation(s.getProgramId(), "specularDirect"), specularDirect);
     glUniform1i(glGetUniformLocation(s.getProgramId(), "specularEnv"), specularEnv);
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "diffuseDirect"), diffuseDirect);
+    glUniform1i(glGetUniformLocation(s.getProgramId(), "diffuseEnv"), diffuseEnv);
 
     glUniform1i(glGetUniformLocation(s.getProgramId(), "currentBRDF"), currentBRDF);
 

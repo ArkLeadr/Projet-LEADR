@@ -127,27 +127,29 @@ void printMatricesToGlslDeclaration(const SphericalHarmonicsCoeffs& shc) {
     printf(") ;\n");
 }
 
-class Proxy {
-    int w;
-    int h;
 
-    vec4* p;
-
-public:
-
-    Proxy(int w, int h, vec4* p) : w(w), h(h), p(p) {}
-
-    vec4& operator() (int i, int j) {
-        i = i - 1;
-        j = j - 1;
-
-        return p[i * w + j];
-    }
+struct leadr1_pixel {
+    float dx;
+    float dy;
+    float dxy;
+    float dxx;
 };
 
-#define approx(val, target, delta) ((val <= target + delta) && (val >= target - delta))
+#pragma pack(push, 1) // exact fit - no padding
+struct leadr2_pixel {
+    float dyy;
+    unsigned char disp;
+};
+#pragma pack(pop) //back to whatever the previous packing mode was
 
-bool importSingleLeadrTexture(const char *filename, Texture& leadr) {
+struct RGBA32F_pixel {
+    float r;
+    float g;
+    float b;
+    float a;
+};
+
+bool importLeadrTexture(const char *filename, Texture &leadr1, Texture &leadr2) {
     FILE* fp = NULL;
 
     fp = fopen(filename, "rb");
@@ -158,18 +160,6 @@ bool importSingleLeadrTexture(const char *filename, Texture& leadr) {
         return false;
     }
 
-//    printf("Loading leadr texture : %s \n", filename);
-
-//    float ten[10] = {0};
-
-//    fread((void*) &ten, sizeof(float), 10, fp);
-
-//    for (int i = 0; i < 10; ++i) {
-//        std::cout << ten[i] << '\n';
-//    }
-
-//    exit(0);
-
     int width, height;
 
     fread((void*) &width, sizeof(int), 1, fp);
@@ -177,44 +167,48 @@ bool importSingleLeadrTexture(const char *filename, Texture& leadr) {
 
     size_t size = width * height;
 
-    float* pixelData = new float[size*4];
-
-    fread((void*) pixelData, sizeof(float), size*4, fp);
-
-    Proxy proxy(width, height, (vec4*) pixelData);
-
     std::cout << "Width : " << width << ", Height : " << height << '\n';
 
     std::cout << '\n';
 
+    std::cout << "sizeof(leadr2_pixel) : " << sizeof(leadr2_pixel) << '\n';
+
+    RGBA32F_pixel* textureData = new RGBA32F_pixel[size];
 
 
-    if (std::string(filename) == "tex1") {
-        for (int i = 1; i <= 512; ++i)
-        for (int j = 1; j <= 512; ++j)
-        {
-//            std::cout <<  << '\n';
+    leadr1_pixel* leadr1Data = new leadr1_pixel[size];
 
-            assert(approx(proxy(i, j).w  - proxy(i, j).x*proxy(i, j).x, 0, 0.00001));
-//            std::cout << proxy(1, i).z - proxy(1, i).x*proxy(1, i).x << '\n';
-        }
+    fread((void*) leadr1Data, sizeof(leadr1_pixel), size, fp);
+
+
+    // Copy from leadr1Data to textureData is a "no-op" here
+    leadr1.loadFromBlob(width, height, GL_RGBA32F, GL_RGBA, GL_FLOAT, leadr1Data);
+
+
+    leadr2_pixel* leadr2Data = new leadr2_pixel[size];
+
+    fread((void*) leadr2Data, sizeof(leadr2_pixel), size, fp);
+
+    // Convert leadr2Data to textureData
+    for (size_t i = 0; i < size; ++i) {
+        textureData[i].r = leadr2Data[i].dyy;
+        textureData[i].g = (float) (leadr2Data[i].disp / 255.f);
+
+        textureData[i].b = 0.f;
+        textureData[i].a = 0.f;
     }
 
-//    exit(0);
+    leadr2.loadFromBlob(width, height, GL_RGBA32F, GL_RGBA, GL_FLOAT, textureData);
 
     fclose(fp);
 
-    leadr.loadFromBlob(width, height, GL_RGBA32F, GL_RGBA, GL_FLOAT, pixelData);
 
-    delete pixelData;
+
+    delete textureData;
+    delete leadr1Data;
+    delete leadr2Data;
 
     return true;
-}
-
-
-bool importLeadrTextures(const char *filename1, const char *filename2, Texture &leadr1, Texture &leadr2) {
-    importSingleLeadrTexture(filename1, leadr1);
-    importSingleLeadrTexture(filename2, leadr2);
 
     return true;
 }

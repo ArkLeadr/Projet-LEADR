@@ -26,9 +26,10 @@ arkMediatorWidget( mediator_shptr )
     
     QAction * load_model_action = file_menu->addAction( tr( "&Load Model" ) );
     
-    QAction * load_texture_action = file_menu->addAction( tr( "&Load Texture" ) );
-    QAction * load_displacement_action = file_menu->addAction( tr( "&Load Disp Map" ) );
-    QAction * load_normal_action = file_menu->addAction( tr( "&Load Normal Map" ) );
+//    QAction * load_texture_action = file_menu->addAction( tr( "&Load Texture" ) );
+//    QAction * load_displacement_action = file_menu->addAction( tr( "&Load Disp Map" ) );
+//    QAction * load_normal_action = file_menu->addAction( tr( "&Load Normal Map" ) );
+
     QAction * load_leadr_action = file_menu->addAction( tr( "&Load LEADR Texture" ) );
 
     QAction * load_env_action = file_menu->addAction( tr( "&Load Env" ) );
@@ -47,9 +48,10 @@ arkMediatorWidget( mediator_shptr )
     
     connect( load_model_action, SIGNAL( triggered() ), this, SLOT( loadModel() ) );
 
-    connect( load_texture_action, SIGNAL( triggered() ), this, SLOT( loadTexture() ) );
-    connect( load_normal_action, SIGNAL( triggered() ), this, SLOT( loadNormalMap() ) );
-    connect( load_displacement_action, SIGNAL( triggered() ), this, SLOT( loadDispMap() ) );
+//    connect( load_texture_action, SIGNAL( triggered() ), this, SLOT( loadTexture() ) );
+//    connect( load_normal_action, SIGNAL( triggered() ), this, SLOT( loadNormalMap() ) );
+//    connect( load_displacement_action, SIGNAL( triggered() ), this, SLOT( loadDispMap() ) );
+
     connect( load_leadr_action, SIGNAL( triggered() ), this, SLOT( loadLEADRTexture() ) );
     
     connect( load_env_action, SIGNAL( triggered() ), this, SLOT( loadEnvTexture() ) );
@@ -73,10 +75,13 @@ arkMenuBar::~arkMenuBar()
 void arkMenuBar::loadModel()
 {
     QString file_path =
-    QFileDialog::getOpenFileName( this, tr( "Select Model file" ), "", tr( "Model Files (*.obj)" ) );
+    QFileDialog::getOpenFileName( this, tr( "Select Model file" ), "",
+                                  tr( "Model Files (*.obj *.dae *.blend *.3ds )" ) );
 
-    if (file_path != "")
+    if ( ! file_path.isEmpty() )
+    {
         m_mediator_shptr->loadModel( file_path.toStdString() );
+    }
 }
 
 void arkMenuBar::loadTexture()
@@ -114,24 +119,19 @@ void arkMenuBar::loadNormalMap()
 
 void arkMenuBar::loadLEADRTexture()
 {
-    QStringList files_paths =
-    QFileDialog::getOpenFileNames( this, tr( "Select LEADR textures" ), "", tr( "LEADR texture ( *.leadr1 *.leadr2 )" ) );
+    QString file_path =
+    QFileDialog::getOpenFileName( this, tr( "Select LEADR texture" ), "", tr( "LEADR texture ( *.leadr )" ) );
 
-    if ( files_paths.length() == 2  )
+    if ( ! file_path.isEmpty() )
     {
-        std::vector< std::string > files;
-        for ( QStringList::iterator it = files_paths.begin(); it != files_paths.end(); ++it )
-        {
-            files.push_back( it->toStdString() );
-        }
-        m_mediator_shptr->loadLEADRTexture( files[0], files[1] );
+        m_mediator_shptr->loadLEADRTexture( file_path.toStdString() );
     }
 }
 
 void arkMenuBar::loadEnvTexture()
 {
 
-    QString file_path = QFileDialog::getOpenFileName( this, tr( "Select Environnement file" ), "", tr( "Model Files (*.hdr)" ) );
+    QString file_path = QFileDialog::getOpenFileName( this, tr( "Select Environnement file" ), "", tr( "Model Files (*.hdr *.float)" ) );
     
     if ( ! file_path.isEmpty() )
     {
@@ -142,7 +142,7 @@ void arkMenuBar::loadEnvTexture()
 void arkMenuBar::loadIrradianceMap()
 {
     QString file_path =
-    QFileDialog::getOpenFileName( this, tr( "Select Irradiance file" ), "", tr( "LEADR Irr file (*.leadrshc)" ) );
+    QFileDialog::getOpenFileName( this, tr( "Select Irradiance file" ), "", tr( "LEADR Irr file (*.shc)" ) );
 
     if ( ! file_path.isEmpty() )
     {

@@ -42,14 +42,24 @@ void arkMediator::setNbSamples( int nb_samples )
     m_renderer->setNbSamples( m_nb_samples );
 }
 
+void arkMediator::setRoughnessOffset(double roughnessOffset)
+{
+    m_renderer->setRoughnessOffset(roughnessOffset);
+}
+
+void arkMediator::setFresnel0(double fresnel0)
+{
+    m_renderer->setFresnel0(fresnel0);
+}
+
 void arkMediator::loadModel( const std::string &model_path )
 {
     m_renderer->loadModel( model_path );
 }
 
-void arkMediator::loadLEADRTexture(  const std::string & leadr1, const std::string & leadr2  )
+void arkMediator::loadLEADRTexture(  const std::string & leadr  )
 {
-    m_renderer->loadLEADRTexture( leadr1, leadr2 );
+    m_renderer->loadLEADRTexture( leadr );
 }
 void arkMediator::loadTexture(  const std::string & texture )
 {
@@ -132,6 +142,16 @@ void arkMediator::setSpecularDirectEnabled(bool enabled)
 void arkMediator::setSpecularEnvEnabled(bool enabled)
 {
     m_renderer->setSpecularEnvEnabled(enabled);
+}
+
+void arkMediator::setDiffuseDirectEnabled(bool enabled)
+{
+    m_renderer->setDiffuseDirectEnabled(enabled);
+}
+
+void arkMediator::setDiffuseEnvEnabled(bool enabled)
+{
+    m_renderer->setDiffuseEnvEnabled(enabled);
 }
 
 

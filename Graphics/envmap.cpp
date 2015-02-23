@@ -2,8 +2,6 @@
 
 
 
-
-
 EnvMap::EnvMap() {
     glGenTextures(1, &m_tex);
 
@@ -25,8 +23,62 @@ void EnvMap::renew() {
     m_shader.renew();
 }
 
+std::string getFilenameExt(const std::string& filename) {
+    std::string::size_type pos = filename.find_first_of('.');
+
+    if((pos == std::string::npos) || (pos == 0)) return {};
+
+    return filename.substr(pos + 1);
+}
+
+struct squareFloatImgBlob {
+    int width;
+    float* data;
+
+    void loadFromFloatFormat(const std::string& filename) {
+        FILE *fp ;
+        assert(fp = fopen(filename.c_str(),"rb")) ;
+
+        fseek(fp, 0, SEEK_END);
+
+        long fileSize = ftell(fp);
+
+        width = sqrt(fileSize/12);
+
+        fseek(fp, 0, SEEK_SET);
+
+        data = (float*) malloc(fileSize);
+
+        size_t bytesRead = fread(data, 1, fileSize, fp);
+
+        printf("File %s has width %d and %d\n", filename.c_str(), width, bytesRead);
+
+        fclose(fp) ;
+    }
+};
+
 bool EnvMap::loadFromFile(std::string filename) {
     if (m_tex != 0) renew();
+
+    std::cerr << filename << " extension : " << getFilenameExt(filename) << '\n';
+
+    if (getFilenameExt(filename) == "float") {
+        squareFloatImgBlob imageBlob;
+
+        imageBlob.loadFromFloatFormat(filename);
+
+        vec3* vData = (vec3*) imageBlob.data;
+        size_t size = imageBlob.width*imageBlob.width;
+        int w = imageBlob.width;
+
+        for (int i = 0; i < imageBlob.width / 2; ++i) {
+            for (int j = 0; j < imageBlob.width; ++j) {
+                std::swap(vData[i*w + j], vData[(w - i - 1)*w + j]);
+            }
+        }
+
+        return loadAsSphericalFloat(imageBlob.width, imageBlob.data);
+    }
 
     Image image;
 
@@ -129,10 +181,28 @@ bool EnvMap::loadAsSpherical(Image &image) {
 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, image.getWidth(), image.getHeight(), 0, formatFrom, typeFrom, image.getData());
 
-//    for (int i = 0; i < image.getWidth()*image.getHeight(); ++i) {
-//        std::cout << ((float*)image.getData())[i] << "  ";
-//    }
-    //        glGenerateMipmap(GL_TEXTURE_2D);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+
+    m_shader.addVertexShader("skybox.vert");
+    m_shader.addFragmentShader("env_spherical.frag");
+
+    m_shader.link();
+
+    return true;
+}
+
+bool EnvMap::loadAsSphericalFloat(int width, float* imageData) {
+    glBindTexture(GL_TEXTURE_2D, m_tex);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, width, 0, GL_RGB, GL_FLOAT, imageData);
+
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

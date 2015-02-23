@@ -113,8 +113,13 @@ public:
     bool diffuse = true;
     bool specularDirect = true;
     bool specularEnv = true;
+    bool diffuseDirect = true;
+    bool diffuseEnv = true;
 
     int currentBRDF = 0;
+
+    float roughnessOffset = 0;
+    float fresnel0 = 0.05;
 };
 
 #endif // SCENETORENAME_H

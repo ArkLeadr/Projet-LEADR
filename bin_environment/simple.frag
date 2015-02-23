@@ -47,9 +47,14 @@ uniform bool diffuse;
 uniform bool specularDirect;
 uniform bool specularEnv;
 
+uniform bool diffuseDirect;
+uniform bool diffuseEnv;
+
 uniform int currentBRDF;
 
-float roughnessOffset = 0;
+uniform float fresnel0;
+
+uniform float roughnessOffset;
 
 vec3 V;
 
@@ -362,50 +367,54 @@ void algo2(vec3 LD, vec3 LC)
 
 //    vec3 LD = normalize(pointLight.position - eyePosition);
 //    vec3 LC = pointLight.color;
+    if (diffuseDirect) {
+        for (int i = 0; i < numLights; ++i) {
+            vec3 Li = LC * 0.1; //vec3(0);
+            vec3 wi = LD; //vec3(0);
 
-    for (int i = 0; i < numLights; ++i) {
-        vec3 Li = LC * 0.1; //vec3(0);
-        vec3 wi = LD; //vec3(0);
+            float xi = wi.x;
+            float yi = wi.y;
+            float zi = wi.z;
 
-        float xi = wi.x;
-        float yi = wi.y;
-        float zi = wi.z;
+            float smith_wi = 0;
 
-        float smith_wi = 0;
+            vec3 P = Li/(1 + smith_wo + smith_wi);
 
-        vec3 P = Li/(1 + smith_wo + smith_wi);
+            float c;
 
-        float c;
+            /* L_{00}.  Note that Y_{00} = 0.282095 */
+            c = 0.282095 ;
+            Llm[L00] += c * P;
 
-        /* L_{00}.  Note that Y_{00} = 0.282095 */
-        c = 0.282095 ;
-        Llm[L00] += c * P;
+            /* L_{1m}. -1 <= m <= 1.  The linear terms */
+            c = 0.488603 ;
+            Llm[L1_1] += c * yi * P;
+            Llm[L10] += c * zi * P;
+            Llm[L11] += c * xi * P;
 
-        /* L_{1m}. -1 <= m <= 1.  The linear terms */
-        c = 0.488603 ;
-        Llm[L1_1] += c * yi * P;
-        Llm[L10] += c * zi * P;
-        Llm[L11] += c * xi * P;
+            /* The Quadratic terms, L_{2m} -2 <= m <= 2 */
 
-        /* The Quadratic terms, L_{2m} -2 <= m <= 2 */
+            /* First, L_{2-2}, L_{2-1}, L_{21} corresponding to xy,yz,xz */
+            c = 1.092548 ;
+            Llm[L2_2] += c * xi*yi * P;
+            Llm[L2_1] += c * yi*zi * P;
+            Llm[L21] += c * xi*zi * P;
 
-        /* First, L_{2-2}, L_{2-1}, L_{21} corresponding to xy,yz,xz */
-        c = 1.092548 ;
-        Llm[L2_2] += c * xi*yi * P;
-        Llm[L2_1] += c * yi*zi * P;
-        Llm[L21] += c * xi*zi * P;
+            /* L_{20}.  Note that Y_{20} = 0.315392 (3z^2 - 1) */
+            c = 0.315392 ;
+            Llm[L20] += c * (3*zi*zi - 1) * P;
 
-        /* L_{20}.  Note that Y_{20} = 0.315392 (3z^2 - 1) */
-        c = 0.315392 ;
-        Llm[L20] += c * (3*zi*zi - 1) * P;
-
-        /* L_{22}.  Note that Y_{22} = 0.546274 (x^2 - y^2) */
-        c = 0.546274 ;
-        Llm[L22] += c * (xi*xi - yi*yi) * P;
+            /* L_{22}.  Note that Y_{22} = 0.546274 (x^2 - y^2) */
+            c = 0.546274 ;
+            Llm[L22] += c * (xi*xi - yi*yi) * P;
+        }
     }
 
-    for (int i = 0; i < 9; ++i) {
-        Llm[i] += shc_env[i] / (1 + smith_wo);
+
+    if (diffuseEnv) {
+        for (int i = 0; i < 9; ++i) {
+            Llm[i] += shc_env[i] / (1 + smith_wo);
+        }
     }
 }
 
@@ -621,13 +630,13 @@ void main( void )
 
     if (currentBRDF == 0) {
         if (specularDirect) {
-            fr += roughSpecularPointLight(pointL) * fresnel_schlick(0.8, LdotH);
+            fr += roughSpecularPointLight(pointL) * fresnel_schlick(fresnel0, LdotH);
 
             finalColor += max(0, dot(N, L)) * fr * vec3(1);
         }
 
         if (specularEnv) {
-            finalColor += roughSpecularCubeMap() * 0.5;
+            finalColor += roughSpecularCubeMap() * fresnel_schlick(fresnel0, NdotV);
         }
 
         if (diffuse) {
@@ -637,7 +646,7 @@ void main( void )
     else if (currentBRDF == 1) {
         float alpha_b = 0.3;
 
-        float F_ = fresnel_schlick(0.8, LdotH);
+        float F_ = fresnel_schlick(fresnel0, LdotH);
         float D_ = D_Beckmann_1D_Walter07(alpha_b, NdotH);
 //        float D_ = D_Beckmann_1D_Schlick94(alpha_b, NdotH);
         float G_ = G1_Beckmann_1D_Walter07(alpha_b, NdotV, NdotH) * G1_Beckmann_1D_Walter07(alpha_b, NdotL, NdotH);

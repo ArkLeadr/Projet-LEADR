@@ -30,7 +30,7 @@ void printCoeffs(const SimpleShc coeffs);
 void printMatricesToGlslDeclaration(const SphericalHarmonicsCoeffs& shc);
 
 
-bool importLeadrTextures(const char* filename1, const char* filename2, Texture& leadr1, Texture& leadr2);
+bool importLeadrTexture(const char *filename, Texture &leadr1, Texture &leadr2);
 
 
 

@@ -34,22 +34,22 @@ public:
     }
 
     void render(const mat4& projection, const mat4& pureView) {
-        glDepthMask(GL_FALSE);
+        GL(glDepthMask(GL_FALSE));
 
         m_skyboxShader.use();
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap.getId());
+        GL(glActiveTexture(GL_TEXTURE0));
+        GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap.getId()));
 
         mat4 PureViewProjection = projection * pureView;
 
-        glUniformMatrix4fv(glGetUniformLocation(m_skyboxShader.getProgramId(), "PureViewProjection"), 1, GL_FALSE,
-                           PureViewProjection.data());
+        GL(glUniformMatrix4fv(glGetUniformLocation(m_skyboxShader.getProgramId(), "PureViewProjection"), 1, GL_FALSE,
+                           PureViewProjection.data()));
 
         m_cube.drawAsTriangles();
 
         Shader::unbind();
-        glDepthMask(GL_TRUE);
+        GL(glDepthMask(GL_TRUE));
     }
 };
 

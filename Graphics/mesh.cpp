@@ -73,17 +73,17 @@ bool Mesh::loadFromAssimpMesh(const aiMesh *mesh) {
     m_vao.bind();
 
     m_vbo.bind();
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), 0);
-    glEnableVertexAttribArray(0);
+    GL(glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), 0));
+    GL(glEnableVertexAttribArray(0));
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(sizeof(vec3)));
-    glEnableVertexAttribArray(1);
+    GL(glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(sizeof(vec3))));
+    GL(glEnableVertexAttribArray(1));
 
-    glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(2*sizeof(vec3)));
-    glEnableVertexAttribArray(2);
+    GL(glVertexAttribPointer(2, 2, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(2*sizeof(vec3))));
+    GL(glEnableVertexAttribArray(2));
 
-    glVertexAttribPointer(3, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(2*sizeof(vec3) + sizeof(vec2)));
-    glEnableVertexAttribArray(3);
+    GL(glVertexAttribPointer(3, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(2*sizeof(vec3) + sizeof(vec2))));
+    GL(glEnableVertexAttribArray(3));
 
     m_ibo.bind();
 
@@ -102,7 +102,7 @@ void Mesh::draw() {
 void Mesh::drawAsTriangles() {
     m_vao.bind();
 
-    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+    GL(glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr));
 
     VAO::unbind();
 }
@@ -110,9 +110,9 @@ void Mesh::drawAsTriangles() {
 void Mesh::drawAsPatch() {
     m_vao.bind();
 
-    glPatchParameteri(GL_PATCH_VERTICES, 3);
+    GL(glPatchParameteri(GL_PATCH_VERTICES, 3));
 
-    glDrawElements(GL_PATCHES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
+    GL(glDrawElements(GL_PATCHES, m_indices.size(), GL_UNSIGNED_INT, nullptr));
 
     VAO::unbind();
 }
@@ -136,8 +136,8 @@ bool Mesh::loadFullscreenQuad() {
     m_vao.bind();
 
     m_vbo.bind();
-    glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-    glEnableVertexAttribArray(0);
+    GL(glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0));
+    GL(glEnableVertexAttribArray(0));
 
     m_ibo.bind();
 

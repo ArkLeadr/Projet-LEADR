@@ -13,11 +13,11 @@ class Cubemap
 
 public:
     Cubemap() {
-        glGenTextures(1, &m_tex);
+        GL(glGenTextures(1, &m_tex));
     }
 
     ~Cubemap() {
-        glDeleteTextures(1, &m_tex);
+        GL(glDeleteTextures(1, &m_tex));
     }
 
     enum Face {
@@ -32,7 +32,7 @@ public:
             return false;
         }
 
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_tex);
+        GL(glBindTexture(GL_TEXTURE_CUBE_MAP, m_tex));
 
         GLuint formatFrom;
         switch(image.getBytesPerPixel()) {
@@ -47,18 +47,18 @@ public:
             break;
         }
 
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_SRGB,
-                     image.getWidth(), image.getHeight(), 0, formatFrom, GL_UNSIGNED_BYTE, image.getData());
+        GL(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, 0, GL_SRGB,
+                     image.getWidth(), image.getHeight(), 0, formatFrom, GL_UNSIGNED_BYTE, image.getData()));
 
 //        glGenerateMipmap(GL_TEXTURE_2D);
 
-        glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        GL(glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+        GL(glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+        GL(glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
+        GL(glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+        GL(glTexParameteri (GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
-        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+        GL(glGenerateMipmap(GL_TEXTURE_CUBE_MAP));
 
         return true;
     }

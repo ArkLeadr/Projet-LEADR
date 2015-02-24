@@ -47,18 +47,18 @@ public:
 
         m_vbo.submitData(m_vertices.data(), m_vertices.size());
 
-        glGenVertexArrays(1, &m_vao);
-        glBindVertexArray(m_vao);
+        GL(glGenVertexArrays(1, &m_vao));
+        GL(glBindVertexArray(m_vao));
 
         m_vbo.bind();
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), 0);
-        glEnableVertexAttribArray(0);
+        GL(glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(Vertex), 0));
+        GL(glEnableVertexAttribArray(0));
 
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(sizeof(vec3)));
-        glEnableVertexAttribArray(1);
+        GL(glVertexAttribPointer(1, 3, GL_FLOAT, false, sizeof(Vertex), BUFFER_OFFSET(sizeof(vec3))));
+        GL(glEnableVertexAttribArray(1));
 
 
-        glBindVertexArray(0);
+        GL(glBindVertexArray(0));
 
         VBO::unbind();
 
@@ -80,14 +80,14 @@ public:
         m_lineShader.use();
         m_lineShader.sendTransformations(projection, view, mat4::Identity());
 //        glUniform1i(glGetUniformLocation(m_lineShader.getProgramId(), "overrideColor"), false);
-        glUniform1i(glGetUniformLocation(m_lineShader.getProgramId(), "overrideColor"), false);
+        GL(glUniform1i(glGetUniformLocation(m_lineShader.getProgramId(), "overrideColor"), false));
 //        glUniform3fv(glGetUniformLocation(m_lineShader.getProgramId(), "userColor"), 1, red.data());
 
-        glBindVertexArray(m_vao);
+        GL(glBindVertexArray(m_vao));
 
-        glDrawArrays(GL_LINES, 0, 6);
+        GL(glDrawArrays(GL_LINES, 0, 6));
 
-        glBindVertexArray(0);
+        GL(glBindVertexArray(0));
 
 
         arrowTransformation = mat4::Identity();
@@ -95,8 +95,8 @@ public:
         arrowTransformation.rotate(normalize({0.f, 0.f, 1.f}), -90.f);
 
         m_lineShader.sendTransformations(projection, view, arrowTransformation);
-        glUniform1i(glGetUniformLocation(m_lineShader.getProgramId(), "overrideColor"), true);
-        glUniform3fv(glGetUniformLocation(m_lineShader.getProgramId(), "userColor"), 1, red.data());
+        GL(glUniform1i(glGetUniformLocation(m_lineShader.getProgramId(), "overrideColor"), true));
+        GL(glUniform3fv(glGetUniformLocation(m_lineShader.getProgramId(), "userColor"), 1, red.data()));
 
         m_arrow.drawAsTriangles();
 
@@ -105,8 +105,8 @@ public:
         arrowTransformation.translate(0,10,0);
 
         m_lineShader.sendTransformations(projection, view, arrowTransformation);
-        glUniform1i(glGetUniformLocation(m_lineShader.getProgramId(), "overrideColor"), true);
-        glUniform3fv(glGetUniformLocation(m_lineShader.getProgramId(), "userColor"), 1, green.data());
+        GL(glUniform1i(glGetUniformLocation(m_lineShader.getProgramId(), "overrideColor"), true));
+        GL(glUniform3fv(glGetUniformLocation(m_lineShader.getProgramId(), "userColor"), 1, green.data()));
 
         m_arrow.drawAsTriangles();
 
@@ -116,12 +116,12 @@ public:
         arrowTransformation.rotate(normalize({1.f, 0.f, 0.f}), 90.f);
 
         m_lineShader.sendTransformations(projection, view, arrowTransformation);
-        glUniform1i(glGetUniformLocation(m_lineShader.getProgramId(), "overrideColor"), true);
-        glUniform3fv(glGetUniformLocation(m_lineShader.getProgramId(), "userColor"), 1, blue.data());
+        GL(glUniform1i(glGetUniformLocation(m_lineShader.getProgramId(), "overrideColor"), true));
+        GL(glUniform3fv(glGetUniformLocation(m_lineShader.getProgramId(), "userColor"), 1, blue.data()));
 
         m_arrow.drawAsTriangles();
 
-        glUseProgram(0);
+        GL(glUseProgram(0));
     }
 };
 

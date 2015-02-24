@@ -3,7 +3,7 @@
 
 
 EnvMap::EnvMap() {
-    glGenTextures(1, &m_tex);
+    GL(glGenTextures(1, &m_tex));
 
     m_cube.loadFromFile("cube.obj");
 
@@ -13,12 +13,12 @@ EnvMap::EnvMap() {
 }
 
 EnvMap::~EnvMap() {
-    glDeleteTextures(1, &m_tex);
+    GL(glDeleteTextures(1, &m_tex));
 }
 
 void EnvMap::renew() {
-    glDeleteTextures(1, &m_tex);
-    glGenTextures(1, &m_tex);
+    GL(glDeleteTextures(1, &m_tex));
+    GL(glGenTextures(1, &m_tex));
 
     m_shader.renew();
 }
@@ -118,29 +118,29 @@ bool EnvMap::loadFromFile(std::string filename) {
 }
 
 void EnvMap::render(const mat4 &projection, const mat4 &pureView) {
-    glDepthMask(GL_FALSE);
+    GL(glDepthMask(GL_FALSE));
 
     m_shader.use();
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, m_tex);
+    GL(glActiveTexture(GL_TEXTURE0));
+    GL(glBindTexture(GL_TEXTURE_2D, m_tex));
 
     mat4 PureViewProjection = projection * pureView;
 
-    glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramId(), "PureViewProjection"), 1, GL_FALSE,
-                       PureViewProjection.data());
+    GL(glUniformMatrix4fv(glGetUniformLocation(m_shader.getProgramId(), "PureViewProjection"), 1, GL_FALSE,
+                       PureViewProjection.data()));
 
     m_cube.drawAsTriangles();
 
     Shader::unbind();
 
-    glDepthMask(GL_TRUE);
+    GL(glDepthMask(GL_TRUE));
 }
 
 void EnvMap::bindTextureToTarget(GLuint target) const
 {
-    glActiveTexture(target);
-    glBindTexture(GL_TEXTURE_2D, m_tex);
+    GL(glActiveTexture(target));
+    GL(glBindTexture(GL_TEXTURE_2D, m_tex));
 }
 
 int EnvMap::channelToRgbFormatHDR(int numChannels) const {
@@ -170,7 +170,7 @@ int EnvMap::channelToSRgbFormat(int numChannels) const {
 }
 
 bool EnvMap::loadAsSpherical(Image &image) {
-    glBindTexture(GL_TEXTURE_2D, m_tex);
+    GL(glBindTexture(GL_TEXTURE_2D, m_tex));
 
     GLuint formatFrom = image.getGlFormat();
     GLuint typeFrom = image.getGlType();
@@ -185,14 +185,14 @@ bool EnvMap::loadAsSpherical(Image &image) {
         internalFormat = channelToSRgbFormat(image.getNumChannels());
     }
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, image.getWidth(), image.getHeight(), 0, formatFrom, typeFrom, image.getData());
+    GL(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, image.getWidth(), image.getHeight(), 0, formatFrom, typeFrom, image.getData()));
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+    GL(glGenerateMipmap(GL_TEXTURE_2D));
 
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    GL(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GL(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GL(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GL(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
 
     m_shader.addVertexShader("skybox.vert");
@@ -204,16 +204,16 @@ bool EnvMap::loadAsSpherical(Image &image) {
 }
 
 bool EnvMap::loadAsSphericalFloat(int width, float* imageData) {
-    glBindTexture(GL_TEXTURE_2D, m_tex);
+    GL(glBindTexture(GL_TEXTURE_2D, m_tex));
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, width, 0, GL_RGB, GL_FLOAT, imageData);
+    GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, width, 0, GL_RGB, GL_FLOAT, imageData));
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+    GL(glGenerateMipmap(GL_TEXTURE_2D));
 
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    GL(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+    GL(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+    GL(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+    GL(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 
 
     m_shader.addVertexShader("skybox.vert");

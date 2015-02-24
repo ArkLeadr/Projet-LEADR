@@ -152,11 +152,11 @@ void Scene::render()
     fbo->bind();
 
     GLuint attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-    glDrawBuffers(3,  attachments);
+    GL(glDrawBuffers(3,  attachments));
 
 
-    glClearColor(0.f, 0.f, 0.f, 0); // BLACK
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    GL(glClearColor(0.f, 0.f, 0.f, 0)); // BLACK
+    GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
 //    skybox.render(projection, camera.getPureViewNoTranslation());
@@ -170,52 +170,52 @@ void Scene::render()
     s.use();
 
     /* Send data to the shader */
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "texSampler"), 0); //Texture unit 0 is for base images.
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "normalMapSampler"), 1);
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "dispMapSampler"), 2); //...
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "shadowMapSampler"), 3);
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "texSampler"), 0)); //Texture unit 0 is for base images.
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "normalMapSampler"), 1));
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "dispMapSampler"), 2)); //...
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "shadowMapSampler"), 3));
 //        texture.bindToTarget(GL_TEXTURE0);
     dogeMap.bindToTarget(GL_TEXTURE2);
 
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "leadr1"), 4);
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "leadr2"), 5);
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "leadr1"), 4));
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "leadr2"), 5));
 
     leadr1.bindToTarget(GL_TEXTURE4);
     leadr2.bindToTarget(GL_TEXTURE5);
 
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "sphericalMapSampler"), 6);
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "sphericalMapSampler"), 6));
 
     envmap.bindTextureToTarget(GL_TEXTURE6);
 
 
-    glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.direction"), 1, dirLight.m_direction.data());
-    glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.color"), 1, dirLight.m_color.data());
+    GL(glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.direction"), 1, dirLight.m_direction.data()));
+    GL(glUniform3fv(glGetUniformLocation(s.getProgramId(), "dirLight.color"), 1, dirLight.m_color.data()));
 
-    glUniform3fv(glGetUniformLocation(s.getProgramId(), "pointLight.position"), 1, pointLight.m_position.data());
-    glUniform3fv(glGetUniformLocation(s.getProgramId(), "pointLight.color"), 1, pointLight.m_color.data());
+    GL(glUniform3fv(glGetUniformLocation(s.getProgramId(), "pointLight.position"), 1, pointLight.m_position.data()));
+    GL(glUniform3fv(glGetUniformLocation(s.getProgramId(), "pointLight.color"), 1, pointLight.m_color.data()));
 
-    glUniform3fv(glGetUniformLocation(s.getProgramId(), "eyePosition"), 1, position.data());
+    GL(glUniform3fv(glGetUniformLocation(s.getProgramId(), "eyePosition"), 1, position.data()));
 
 
-    glUniform1f(glGetUniformLocation(s.getProgramId(), "userDisplacementFactor"), userDisplacementFactor);
-    glUniform1f(glGetUniformLocation(s.getProgramId(), "tessFactor"), tessFactor);
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "nbSample"), nbSample);
-    glUniform1f(glGetUniformLocation(s.getProgramId(), "roughnessOffset"), roughnessOffset);
-    glUniform1f(glGetUniformLocation(s.getProgramId(), "fresnel0"), fresnel0);
+    GL(glUniform1f(glGetUniformLocation(s.getProgramId(), "userDisplacementFactor"), userDisplacementFactor));
+    GL(glUniform1f(glGetUniformLocation(s.getProgramId(), "tessFactor"), tessFactor));
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "nbSample"), nbSample));
+    GL(glUniform1f(glGetUniformLocation(s.getProgramId(), "roughnessOffset"), roughnessOffset));
+    GL(glUniform1f(glGetUniformLocation(s.getProgramId(), "fresnel0"), fresnel0));
 
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "filtering"), filtering);
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "diffuse"), diffuse);
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "specularDirect"), specularDirect);
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "specularEnv"), specularEnv);
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "diffuseDirect"), diffuseDirect);
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "diffuseEnv"), diffuseEnv);
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "filtering"), filtering));
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "diffuse"), diffuse));
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "specularDirect"), specularDirect));
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "specularEnv"), specularEnv));
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "diffuseDirect"), diffuseDirect));
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "diffuseEnv"), diffuseEnv));
 
-    glUniform1i(glGetUniformLocation(s.getProgramId(), "currentBRDF"), currentBRDF);
+    GL(glUniform1i(glGetUniformLocation(s.getProgramId(), "currentBRDF"), currentBRDF));
 
 
     /* SHADOW PASS */
-    glPolygonOffset(1.1f, 4.0f);
-    glEnable(GL_POLYGON_OFFSET_FILL);
+    GL(glPolygonOffset(1.1f, 4.0f));
+    GL(glEnable(GL_POLYGON_OFFSET_FILL));
 
     mat4 lightProjection = mat4::Projection(70, 1.f, 0.1f, 1000.f);
     mat4 lightView = mat4::LookAt(vec3{15.f, 15.f, 15.f}, vec3{0, 0, 0}, vec3{0, 1, 0});
@@ -230,26 +230,26 @@ void Scene::render()
 
     shadowmap.unbind();
 
-    glDisable(GL_POLYGON_OFFSET_FILL);
+    GL(glDisable(GL_POLYGON_OFFSET_FILL));
 
     /* FIRE! */
     s.sendTransformations(projection, camera.getView(), cubeTransformation);
-    glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "lightMVP"), 1, GL_FALSE, lightMVP.data());
+    GL(glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "lightMVP"), 1, GL_FALSE, lightMVP.data()));
 
-    glUniform3fv(glGetUniformLocation(s.getProgramId(), "shc_env"), 9, (float*) shc.coeffs);
+    GL(glUniform3fv(glGetUniformLocation(s.getProgramId(), "shc_env"), 9, (float*) shc.coeffs));
 
-    glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hred"), 1, GL_FALSE, shc.hred.data());
-    glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hgreen"), 1, GL_FALSE, shc.hgreen.data());
-    glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hblue"), 1, GL_FALSE, shc.hblue.data());
+    GL(glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hred"), 1, GL_FALSE, shc.hred.data()));
+    GL(glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hgreen"), 1, GL_FALSE, shc.hgreen.data()));
+    GL(glUniformMatrix4fv(glGetUniformLocation(s.getProgramId(), "hblue"), 1, GL_FALSE, shc.hblue.data()));
 
     shadowmap.bindShadowMapToTarget(GL_TEXTURE3);
 
     fbo->bind();
     if(wireframe)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        GL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
     mainModel.drawAsPatch(projection, camera.getView(), cubeTransformation, &s);
     if(wireframe)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        GL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
     Shader::unbind();
 
 
@@ -259,8 +259,8 @@ void Scene::render()
 
     basicLampShader.use();
     basicLampShader.sendTransformations(projection, camera.getView(), lampTransformation);
-    glUniform1i(glGetUniformLocation(basicLampShader.getProgramId(), "overrideColor"), true);
-    glUniform3fv(glGetUniformLocation(basicLampShader.getProgramId(), "userColor"), 1, pointLight.m_color.data());
+    GL(glUniform1i(glGetUniformLocation(basicLampShader.getProgramId(), "overrideColor"), true));
+    GL(glUniform3fv(glGetUniformLocation(basicLampShader.getProgramId(), "userColor"), 1, pointLight.m_color.data()));
 
     basicLamp.drawAsTriangles();
 
@@ -275,8 +275,8 @@ void Scene::render()
 
     FBO::unbind();
 
-    glClearColor(0.f, 0.f, 0.f, 0); // BLACK
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    GL(glClearColor(0.f, 0.f, 0.f, 0)); // BLACK
+    GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
 #if ENABLE_HDR
@@ -297,7 +297,7 @@ void Scene::render()
 
     toLuminanceFbo.bind();
 
-    glClear(GL_DEPTH_BUFFER_BIT);
+    GL(glClear(GL_DEPTH_BUFFER_BIT));
 
     fbo->getTexture(0).bindToTarget(GL_TEXTURE0);
     toLuminancePass.resize(closestWidth, closestHeight);
@@ -314,14 +314,14 @@ void Scene::render()
 
     toLuminanceFbo.bindToTarget(GL_TEXTURE0);
 
-    glGenerateMipmap(GL_TEXTURE_2D);
+    GL(glGenerateMipmap(GL_TEXTURE_2D));
 
     onePixel[0] = 0;
     onePixel[1] = 0;
     onePixel[2] = 0;
     onePixel[3] = 0;
 
-    glGetTexImage(GL_TEXTURE_2D, numLevels - 1, GL_RGBA, GL_FLOAT, onePixel);
+    GL(glGetTexImage(GL_TEXTURE_2D, numLevels - 1, GL_RGBA, GL_FLOAT, onePixel));
 
 //        std::cerr << "Mean RGB - " << onePixel[0] << ' ' << onePixel[1] << ' ' << onePixel[2] << ' ' << onePixel[3] << '\n';
 
@@ -332,9 +332,9 @@ void Scene::render()
     Shader& tonemapShader = tonemapPass.getShader();
     tonemapShader.use();
 
-    glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "logAvLum"), onePixel[3]);
-    glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "gamma"), gamma);
-    glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "keyValue"), keyValue);
+    GL(glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "logAvLum"), onePixel[3]));
+    GL(glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "gamma"), gamma));
+    GL(glUniform1f(glGetUniformLocation(tonemapShader.getProgramId(), "keyValue"), keyValue));
     tonemapPass.fire();
 
 #else
@@ -354,11 +354,11 @@ void Scene::renderLeadrQuadOnly()
     fbo->bind();
 
     GLuint attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-    glDrawBuffers(3,  attachments);
+    GL(glDrawBuffers(3,  attachments));
 
 
-    glClearColor(0.f, 0.f, 0.f, 0); // BLACK
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    GL(glClearColor(0.f, 0.f, 0.f, 0)); // BLACK
+    GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
     Shader& leadr_s = leadrScreenpass.getShader();
@@ -366,8 +366,8 @@ void Scene::renderLeadrQuadOnly()
     /* Bind a shader */
     leadr_s.use();
 
-    glUniform1i(glGetUniformLocation(leadr_s.getProgramId(), "leadr1"), 4);
-    glUniform1i(glGetUniformLocation(leadr_s.getProgramId(), "leadr2"), 5);
+    GL(glUniform1i(glGetUniformLocation(leadr_s.getProgramId(), "leadr1"), 4));
+    GL(glUniform1i(glGetUniformLocation(leadr_s.getProgramId(), "leadr2"), 5));
     leadr1.bindToTarget(GL_TEXTURE4);
     leadr2.bindToTarget(GL_TEXTURE5);
 
@@ -383,8 +383,8 @@ void Scene::renderLeadrQuadOnly()
 
     FBO::unbind();
 
-    glClearColor(0.f, 0.f, 0.f, 0); // BLACK
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    GL(glClearColor(0.f, 0.f, 0.f, 0)); // BLACK
+    GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 
     fbo->getTexture(fboTexId).bindToTarget(GL_TEXTURE0);

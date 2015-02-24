@@ -38,19 +38,19 @@ bool Shader::addShader(std::string filename, GLenum type) {
 
     GLint shader_compiled;
 
-    GLuint shaderId = glCreateShader(type);
+    GLuint shaderId = GL(glCreateShader(type));
 
-    glShaderSource(shaderId, 1, (const char**)&source, &length);
+    GL(glShaderSource(shaderId, 1, (const char**)&source, &length));
 
     free(source);
 
-    glCompileShader(shaderId);
+    GL(glCompileShader(shaderId));
 
-    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &shader_compiled);
+    GL(glGetShaderiv(shaderId, GL_COMPILE_STATUS, &shader_compiled));
 
     GLsizei log_length = 0;
     GLchar message[4096];
-    glGetShaderInfoLog(shaderId, 4096, &log_length, message);
+    GL(glGetShaderInfoLog(shaderId, 4096, &log_length, message));
 
     if (shader_compiled != GL_TRUE)
     {
@@ -62,32 +62,22 @@ bool Shader::addShader(std::string filename, GLenum type) {
         std::cerr << "Althoug compiled with success, shader " << filename << " has following compile output: " << message << '\n';
     }
 
-    if (type == GL_VERTEX_SHADER) {
-        // Using layout(location = x) instead
 
-//        glBindAttribLocation(m_program, 0, "position");
-//        glBindAttribLocation(m_program, 1, "normal");
-    }
-//    glBindAttribLocation(program, 0, "position"); // The index passed into glBindAttribLocation is
-//    glBindAttribLocation(program, 1, "texcoord"); // used by glEnableVertexAttribArray. "position"
-//    glBindAttribLocation(program, 2, "normal");   // "texcoord" "normal" and "color" are the names of the
-//    glBindAttribLocation(program, 3, "color");    // respective inputs in your fragment shader.
-
-    glAttachShader(m_program, shaderId);
+    GL(glAttachShader(m_program, shaderId));
 
     return true;
 }
 
 bool Shader::link() {
-    glLinkProgram(m_program);
+    GL(glLinkProgram(m_program));
 
     GLint program_linked;
-    glGetProgramiv(m_program, GL_LINK_STATUS, &program_linked);
+    GL(glGetProgramiv(m_program, GL_LINK_STATUS, &program_linked));
     if (program_linked != GL_TRUE)
     {
         GLsizei log_length = 0;
         GLchar message[1024];
-        glGetProgramInfoLog(m_program, 1024, &log_length, message);
+        GL(glGetProgramInfoLog(m_program, 1024, &log_length, message));
 
         std::cerr << "Error linking program: " << message;
 
@@ -98,28 +88,28 @@ bool Shader::link() {
 }
 
 void Shader::use() {
-    glUseProgram(m_program);
+    GL(glUseProgram(m_program));
 }
 
 void Shader::sendTransformations(const mat4& projection, const mat4& view, const mat4& model) {
     mat4 MVP = projection * view * model;
 
-    glUniformMatrix4fv(glGetUniformLocation(m_program, "MVP"), 1, GL_FALSE, MVP.data());
+    GL(glUniformMatrix4fv(glGetUniformLocation(m_program, "MVP"), 1, GL_FALSE, MVP.data()));
 
-    glUniformMatrix4fv(glGetUniformLocation(m_program, "world"), 1, GL_FALSE, model.data());
+    GL(glUniformMatrix4fv(glGetUniformLocation(m_program, "world"), 1, GL_FALSE, model.data()));
 
-    glUniformMatrix4fv(glGetUniformLocation(m_program, "projection"), 1, GL_FALSE, projection.data());
-    glUniformMatrix4fv(glGetUniformLocation(m_program, "view"), 1, GL_FALSE, view.data());
-    //    glUniformMatrix4fv(glGetUniformLocation(m_program, "model"), 1, GL_FALSE, model.data());
+    GL(glUniformMatrix4fv(glGetUniformLocation(m_program, "projection"), 1, GL_FALSE, projection.data()));
+    GL(glUniformMatrix4fv(glGetUniformLocation(m_program, "view"), 1, GL_FALSE, view.data()));
+    //    GL(glUniformMatrix4fv(glGetUniformLocation(m_program, "model"), 1, GL_FALSE, model.data()));
 }
 
 void Shader::sendMaterial(const Material &mat)
 {
-    glUniform3fv(glGetUniformLocation(m_program, "ka"), 1, mat.m_ambientReflectance.data());
-    glUniform3fv(glGetUniformLocation(m_program, "kd"), 1, mat.m_diffuseReflectance.data());
-    glUniform3fv(glGetUniformLocation(m_program, "ks"), 1, mat.m_specularReflectance.data());
+    GL(glUniform3fv(glGetUniformLocation(m_program, "ka"), 1, mat.m_ambientReflectance.data()));
+    GL(glUniform3fv(glGetUniformLocation(m_program, "kd"), 1, mat.m_diffuseReflectance.data()));
+    GL(glUniform3fv(glGetUniformLocation(m_program, "ks"), 1, mat.m_specularReflectance.data()));
 
-    glUniform1f(glGetUniformLocation(m_program, "shininess"), mat.m_specularExponent);
+    GL(glUniform1f(glGetUniformLocation(m_program, "shininess"), mat.m_specularExponent));
 
     mat.m_diffuseTexture.bindToTarget(GL_TEXTURE0);
     mat.m_normalTexture.bindToTarget(GL_TEXTURE1);

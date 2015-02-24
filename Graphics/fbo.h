@@ -49,11 +49,11 @@ public:
     }
 
     void bind() {
-        glBindFramebuffer(GL_FRAMEBUFFER, m_fboId);
+        GL(glBindFramebuffer(GL_FRAMEBUFFER, m_fboId));
     }
 
     static void unbind() {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        GL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
     }
 };
 
@@ -72,45 +72,45 @@ public:
         m_height(height){
 //        std::cerr << "Building fbo " << m_width << " x " << m_height << '\n';
 
-        glBindFramebuffer(GL_FRAMEBUFFER, m_fboId.get());
+        GL(glBindFramebuffer(GL_FRAMEBUFFER, m_fboId.get()));
 
-        glBindTexture(GL_TEXTURE_2D, m_texId.get());
+        GL(glBindTexture(GL_TEXTURE_2D, m_texId.get()));
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        GL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0));
 
         if (filterParam == GL_LINEAR) {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+            GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
         }
         else if(filterParam == GL_NEAREST) {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+            GL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
         }
         else {
             std::cerr << "Error. SingleColorFBO filterParam UNKNOWN/FALSE." << '\n';
         }
 
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texId.get(), 0);
+        GL(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texId.get(), 0));
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             std::cerr << "Error. SingleColorFBO framebuffer INCOMPLETE." << '\n';
         }
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        GL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
     }
 
     void bind() {
-        glBindFramebuffer(GL_FRAMEBUFFER, m_fboId.get());
+        GL(glBindFramebuffer(GL_FRAMEBUFFER, m_fboId.get()));
     }
 
     static void unbind() {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        GL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
     }
 
     void bindToTarget(GLuint target) const
     {
-        glActiveTexture(target);
-        glBindTexture(GL_TEXTURE_2D, m_texId.get());
+        GL(glActiveTexture(target));
+        GL(glBindTexture(GL_TEXTURE_2D, m_texId.get()));
     }
 };
 

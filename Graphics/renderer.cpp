@@ -203,7 +203,7 @@ Renderer::Renderer(int width, int height) :
 void Renderer::initializeGL(void) {
     initGL();
 
-    glViewport(0, 0, m_width, m_height);
+    GL(glViewport(0, 0, m_width, m_height));
 
     m_scene = new Scene(m_width, m_height);
     m_scene->initScene();
@@ -212,7 +212,7 @@ void Renderer::initializeGL(void) {
 }
 
 void Renderer::resizeGL(int width, int height) {
-    glViewport(0, 0, width, height);
+    GL(glViewport(0, 0, width, height));
 
     m_width = width;
     m_height = height;
@@ -301,7 +301,9 @@ void Renderer::setFinalFboTarget(int targetIndex)
 bool Renderer::initGL()
 {
     std::cerr << "OpenGL Version : " << glGetString(GL_VERSION) << std::endl;
+    GL();
     std::cerr << "OpenGL Vendor : " << glGetString(GL_VENDOR) << std::endl;
+    GL();
 
 
     // EVERYONE ON EVERY PLATFORM WILL ENJOY THIS
@@ -309,34 +311,27 @@ bool Renderer::initGL()
 
     /*Potentiel fix pour le crash quand SDL contexte > OpenGL 3.1 + GLEW*/
     glewExperimental = GL_TRUE;
-
     GLenum GLEWinitialization( glewInit() );
+    GL_flushError(); // Glew might set gl error flag even when apparently successfull (know "bug")
 
     std::cerr << "Initializing GLEW...\n";
 
     if(GLEWinitialization != GLEW_OK)
     {
         std::cout << "Erreur d'initialisation de GLEW : " << glewGetErrorString(GLEWinitialization) << std::endl;
-
         return false;
     }
-
-    if (GLEW_ARB_debug_output)
-    {
-        glDebugMessageCallbackARB(&glBreak_debug, nullptr);
-    }
-
 
 //    #endif
 
     // Activation du Depth Buffer
 
-    glEnable(GL_DEPTH_TEST);
+    GL(glEnable(GL_DEPTH_TEST));
 
-    glFrontFace(GL_CW);
-//    glCullFace(GL_BACK);
+    GL(glFrontFace(GL_CW));
+//    GL(glCullFace(GL_BACK));
 
-//    glEnable(GL_CULL_FACE);
+//    GL(glEnable(GL_CULL_FACE));
 
     return true;
 }

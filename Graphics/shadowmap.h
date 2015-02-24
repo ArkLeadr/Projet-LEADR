@@ -17,23 +17,23 @@ public:
     }
 
     void bind() {
-        glGetIntegerv(GL_VIEWPORT, m_oldViewport);
+        GL(glGetIntegerv(GL_VIEWPORT, m_oldViewport));
 
-        glViewport(0, 0, m_shadowFbo.getWidth(), m_shadowFbo.getHeight());
+        GL(glViewport(0, 0, m_shadowFbo.getWidth(), m_shadowFbo.getHeight()));
 
         m_shadowFbo.bind();
 
-        glClear(GL_DEPTH_BUFFER_BIT);
+        GL(glClear(GL_DEPTH_BUFFER_BIT));
 
-        glDrawBuffer(GL_NONE);
-        glReadBuffer(GL_NONE);
+        GL(glDrawBuffer(GL_NONE));
+        GL(glReadBuffer(GL_NONE));
     }
 
     void unbind() {
         FBO::unbind();
 
         //Restore old viewport
-        glViewport(m_oldViewport[0], m_oldViewport[1], m_oldViewport[2], m_oldViewport[3]);
+        GL(glViewport(m_oldViewport[0], m_oldViewport[1], m_oldViewport[2], m_oldViewport[3]));
     }
 
     void bindShadowMapToTarget(GLuint target) {

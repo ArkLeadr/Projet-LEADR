@@ -40,18 +40,18 @@ public:
 
     void fire() {
         GLint oldViewport[4];
-        glGetIntegerv(GL_VIEWPORT, oldViewport);
+        GL(glGetIntegerv(GL_VIEWPORT, oldViewport));
 
         m_shader.use();
 
-        glUniform1i(glGetUniformLocation(m_shader.getProgramId(), "screenWidth"), m_width);
-        glUniform1i(glGetUniformLocation(m_shader.getProgramId(), "screenHeight"), m_height);
+        GL(glUniform1i(glGetUniformLocation(m_shader.getProgramId(), "screenWidth"), m_width));
+        GL(glUniform1i(glGetUniformLocation(m_shader.getProgramId(), "screenHeight"), m_height));
 
-        glViewport(0, 0, m_width, m_height);
+        GL(glViewport(0, 0, m_width, m_height));
 
         m_screenQuad.draw();
 
-        glViewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
+        GL(glViewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]));
     }
 };
 
@@ -88,18 +88,18 @@ public:
 
     void fire() {
         GLint oldViewport[4];
-        glGetIntegerv(GL_VIEWPORT, oldViewport);
+        GL(glGetIntegerv(GL_VIEWPORT, oldViewport));
 
         m_shader.use();
 
-        glUniform1i(glGetUniformLocation(m_shader.getProgramId(), "screenWidth"), m_width);
-        glUniform1i(glGetUniformLocation(m_shader.getProgramId(), "screenHeight"), m_height);
+        GL(glUniform1i(glGetUniformLocation(m_shader.getProgramId(), "screenWidth"), m_width));
+        GL(glUniform1i(glGetUniformLocation(m_shader.getProgramId(), "screenHeight"), m_height));
 
-        glViewport(0, 0, m_width, m_height);
+        GL(glViewport(0, 0, m_width, m_height));
 
         m_screenQuad.draw();
 
-        glViewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]);
+        GL(glViewport(oldViewport[0], oldViewport[1], oldViewport[2], oldViewport[3]));
     }
 };
 

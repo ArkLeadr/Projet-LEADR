@@ -26,15 +26,15 @@ class Shader {
 
 public:
     Shader() {
-        m_program = glCreateProgram();
+        m_program = GL(glCreateProgram());
     }
 
     ~Shader() {
-        glDeleteProgram(m_program);
+        GL(glDeleteProgram(m_program));
     }
 
     static void unbind() {
-        glUseProgram(0);
+        GL(glUseProgram(0));
     }
 
     bool addVertexShader(std::string filename);
@@ -68,8 +68,8 @@ public:
     }
 
     void renew() {
-        glDeleteProgram(m_program);
-        m_program = glCreateProgram();
+        GL(glDeleteProgram(m_program));
+        m_program = GL(glCreateProgram());
     }
 
 private:

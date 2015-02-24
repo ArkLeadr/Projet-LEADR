@@ -2,9 +2,59 @@
 #define GL_H
 
 #include <cstdint>
+#include <cassert>
+#include <cstdio>
 #include <GL/glew.h>
 
 #define BUFFER_OFFSET(p) ((uint8_t*)0 + p)
+
+inline bool checkGlErrorEnum(int glEnumErrorCode) {
+    if (glEnumErrorCode == GL_NO_ERROR) {
+        return true;
+    }
+
+    fprintf(stderr, "glGetError() returned : ");
+
+    switch (glEnumErrorCode) {
+    case GL_INVALID_ENUM:
+        fprintf(stderr, "GL_INVALID_ENUM");
+        break;
+    case GL_INVALID_VALUE:
+         fprintf(stderr, "GL_INVALID_VALUE");
+        break;
+    case GL_INVALID_OPERATION:
+        fprintf(stderr, "GL_INVALID_OPERATION");
+        break;
+    case GL_INVALID_FRAMEBUFFER_OPERATION:
+        fprintf(stderr, "GL_INVALID_FRAMEBUFFER_OPERATION");
+        break;
+    case GL_OUT_OF_MEMORY:
+        fprintf(stderr, "GL_OUT_OF_MEMORY");
+        break;
+    case GL_STACK_UNDERFLOW:
+        fprintf(stderr, "GL_STACK_UNDERFLOW");
+        break;
+    case GL_STACK_OVERFLOW:
+        fprintf(stderr, "GL_STACK_OVERFLOW");
+        break;
+    }
+
+    fprintf(stderr, "\n");
+
+    return false;
+}
+
+#define DEBUG 1
+
+#if DEBUG
+#define GL(glexpr) \
+    glexpr; \
+    assert(checkGlErrorEnum(glGetError()));
+#else
+#define GL(glexpr) glexpr;
+#endif
+
+#define GL_flushError() (void) glGetError();
 
 #include <algorithm>
 
@@ -37,8 +87,8 @@ private:
 #define GENERATE_GL_TypeId_SafeHandler(ClassName, glGenFunction, glDeleteFunction)      \
     class ClassName : public SafeGLid {                                                 \
     public:                                                                             \
-        ClassName() { glGenFunction(1, &glId); }                                        \
-        ~ClassName() { glDeleteFunction(1, &glId); }                                    \
+        ClassName() { GL(glGenFunction(1, &glId)); }                                        \
+        ~ClassName() { GL(glDeleteFunction(1, &glId)); }                                    \
         ClassName(const ClassName& other) = delete;                                     \
         void operator=(const ClassName& other) = delete;                                \
         ClassName(ClassName&& other) { std::swap(glId, other.glId); }                   \

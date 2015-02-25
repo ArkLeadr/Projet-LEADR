@@ -329,9 +329,9 @@ bool Renderer::initGL()
     GL(glEnable(GL_DEPTH_TEST));
 
     GL(glFrontFace(GL_CW));
-//    GL(glCullFace(GL_BACK));
+    GL(glCullFace(GL_BACK));
 
-//    GL(glEnable(GL_CULL_FACE));
+    GL(glEnable(GL_CULL_FACE));
 
     return true;
 }

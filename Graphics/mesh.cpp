@@ -125,8 +125,8 @@ bool Mesh::loadFullscreenQuad() {
     std::vector<GLuint> quadIndices;
 
     quadVertices = std::vector<vec3>{vec3{-1.f, -1.f, 0.f}, vec3{1.f, -1.f, 0.f}, vec3{1.f, 1.f, 0.f}, vec3{-1.f, 1.f, 0.f}};
-    quadIndices = std::vector<GLuint>{0, 1, 2,
-                                      0, 2, 3};
+    quadIndices = std::vector<GLuint>{2, 1, 0,
+                                      3, 2, 0};
 
     m_vbo.submitData(quadVertices.data(), quadVertices.size());
     m_ibo.submitData(quadIndices.data(), quadIndices.size());

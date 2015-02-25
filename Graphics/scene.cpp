@@ -66,7 +66,7 @@ void Scene::initScene() {
 
     fbo.reset(new FBO(m_width, m_height, 3));
 
-    importCoeffs("grace_probe.leadrshc", shc);
+    importCoeffs("grace_probe.shc", shc);
 
     computeMatrixRepresentation(shc);
 

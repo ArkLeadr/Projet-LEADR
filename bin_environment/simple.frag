@@ -605,7 +605,7 @@ vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 lightColor, vec3 normal) {
 
     // Replace the 3 colors by light ambiant, diffuse and specular intensity respectively
     float tmpAmbientFactor = 0.2;
-    return ka*lightColor*tmpAmbientFactor + (texture(texSampler, inData.texcoord).xyz + ks*Is) * lightColor*Id;
+    return Is * lightColor*Id;
 }
 
 vec3 blinn_phong_calc(DirLight light, vec3 normal) {

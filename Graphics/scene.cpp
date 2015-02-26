@@ -148,7 +148,7 @@ void Scene::render()
 
     /* Get your lights ready */
     DirLight dirLight{vec3{2, 2, 2}, vec3{0, -1, -1}};
-    PointLight pointLight{vec3{0, 1, 0}, vec3{x*10, 0, z*10}};
+    PointLight pointLight{vec3{1, 1, 1}, vec3{x*10, 0, z*10}};
 
 
     fbo->bind();

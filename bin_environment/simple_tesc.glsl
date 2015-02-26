@@ -43,6 +43,9 @@ struct outputPatch
 
 
  float edgesLengthSum = 0;
+ float edgesLength0 = 0;
+ float edgesLength1 = 0;
+ float edgesLength2 = 0;
 
 
 /*
@@ -107,12 +110,35 @@ struct outputPatch
      edgesLengthSum += abs(length(oPatch.worldPos_B030 - oPatch.worldPos_B003));
      edgesLengthSum += abs(length(oPatch.worldPos_B003 - oPatch.worldPos_B300));
      edgesLengthSum += abs(length(oPatch.worldPos_B300 - oPatch.worldPos_B030));
+
+     edgesLength0 += abs(length(oPatch.worldPos_B030 - oPatch.worldPos_B003));
+     edgesLength1 += abs(length(oPatch.worldPos_B003 - oPatch.worldPos_B300));
+     edgesLength2 += abs(length(oPatch.worldPos_B300 - oPatch.worldPos_B030));
  }
 
 
  float GetTessLevel(float Distance0, float Distance1)
  {
      float tessLevel = tessFactor * edgesLengthSum / ((Distance0 + Distance1) / 2.0);
+
+     return tessLevel;
+ }
+
+ float GetTessLevel0(float Distance0, float Distance1)
+ {
+     float tessLevel = tessFactor * edgesLength0 / ((Distance0 + Distance1) / 2.0);
+
+     return tessLevel;
+ }
+ float GetTessLevel1(float Distance0, float Distance1)
+ {
+     float tessLevel = tessFactor * edgesLength1 / ((Distance0 + Distance1) / 2.0);
+
+     return tessLevel;
+ }
+ float GetTessLevel2(float Distance0, float Distance1)
+ {
+     float tessLevel = tessFactor * edgesLength2 / ((Distance0 + Distance1) / 2.0);
 
      return tessLevel;
  }
@@ -141,9 +167,14 @@ void main(void)
      float dist1 = distance(eyePosition, inData[1].pos);
      float dist2 = distance(eyePosition, inData[2].pos);
 
-     gl_TessLevelOuter[0] = GetTessLevel(dist1, dist2);
-     gl_TessLevelOuter[1] = GetTessLevel(dist2, dist0);
-     gl_TessLevelOuter[2] = GetTessLevel(dist0, dist1);
-     gl_TessLevelInner[0] = gl_TessLevelOuter[2];
+//     gl_TessLevelOuter[0] = GetTessLevel(dist1, dist2);
+//     gl_TessLevelOuter[1] = GetTessLevel(dist2, dist0);
+//     gl_TessLevelOuter[2] = GetTessLevel(dist0, dist1);
+//     gl_TessLevelInner[0] = gl_TessLevelOuter[2];
+
+     gl_TessLevelOuter[0] = GetTessLevel1(dist1, dist2);
+     gl_TessLevelOuter[1] = GetTessLevel2(dist2, dist0);
+     gl_TessLevelOuter[2] = GetTessLevel0(dist0, dist1);
+     gl_TessLevelInner[0] = GetTessLevel(dist0, dist1);;
 
 }

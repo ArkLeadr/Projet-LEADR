@@ -32,7 +32,7 @@ bool Shader::addShader(std::string filename, GLenum type) {
     GLchar* source = readFile(filename, &length);
 
     if (!source) {
-        std::cerr << "Error reading source from " << filename;
+        std::cerr << "Error reading source from " << filename << '\n';
         return false;
     }
 

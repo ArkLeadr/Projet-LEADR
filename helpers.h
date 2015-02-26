@@ -17,6 +17,10 @@ inline char* readFile(const std::string& filename, int* outLength) {
 
 //    std::cerr << "File length: " << length << '\n';
 
+    if (length == (-1)) {
+        return nullptr;
+    }
+
     char* buffer = new char [length];
 
     file.read(buffer, length);

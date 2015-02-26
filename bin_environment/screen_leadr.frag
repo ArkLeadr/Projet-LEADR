@@ -11,6 +11,8 @@ vec3 N;
 
 const int numLights = 1;
 
+uniform bool diffuse;
+
 layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec4 normalColor;
 layout(location = 2) out vec4 texcoordColor;
@@ -57,6 +59,8 @@ float var_x = 0;
 float var_y = 0;
 float c_xy = 0;
 
+vec4 stats1;
+vec4 stats2;
 
 //vec4 mean1 = textureLod(leadr1, screenTexCoord, 4096); // 4096 should be clamped to the max mip level
 //vec4 mean2 = textureLod(leadr2, screenTexCoord, 4096); // giving us then the total mean
@@ -68,11 +72,11 @@ void computeLeadrStatistics()
 {
     float fakeLod = 0;
 
-    vec4 stats1 = textureLod(leadr1, screenTexCoord, fakeLod);
-    vec4 stats2 = textureLod(leadr2, screenTexCoord, fakeLod);
+    stats1 = textureLod(leadr1, screenTexCoord, fakeLod);
+    stats2 = textureLod(leadr2, screenTexCoord, fakeLod);
 
-//    vec4 stats1 = texture(leadr1, screenTexCoord);
-//    vec4 stats2 = texture(leadr2, screenTexCoord);
+//    stats1 = texture(leadr1, screenTexCoord);
+//    stats2 = texture(leadr2, screenTexCoord);
 
     float baseRoughnessOffset = 0;
 
@@ -217,7 +221,10 @@ vec3 dumbTest(vec3 self) {
 
 //    return texture(dispMapSampler, screenTexCoord).xyz;
 
-//    return vec3(disp);
+    if (diffuse)
+        return vec3(stats1.x);
+    else
+        return vec3(stats2.x);
 
     return vec3(P22(0, 0));
 

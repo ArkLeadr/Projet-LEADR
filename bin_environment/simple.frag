@@ -136,7 +136,7 @@ void computeLeadrStatistics()
 
 
 
-    float baseRoughnessOffset = roughnessOffset + 0.0000001; // Try to ensure no zero divide or whatever
+    float baseRoughnessOffset = roughnessOffset + 0.000001; // Try to ensure no zero divide or whatever
 
     E_xn    = stats1.x;
     E_yn    = stats1.y;
@@ -375,7 +375,7 @@ vec3 Llm[9] = vec3[9](vec3(0), vec3(0), vec3(0), vec3(0), vec3(0), vec3(0), vec3
 /* Algo 2 */
 void algo2(vec3 LD, vec3 LC)
 {
-    float smith_wo = 0;
+    float smith_wo = smith(V) * 0.001;
 
     for (int i = 0; i < 9; ++i) {
         Llm[i] = vec3(0);
@@ -385,16 +385,16 @@ void algo2(vec3 LD, vec3 LC)
 //    vec3 LC = pointLight.color;
     if (diffuseDirect) {
         for (int i = 0; i < numLights; ++i) {
-            vec3 Li = LC * 0.1; //vec3(0);
+            vec3 Li = LC; //vec3(0);
             vec3 wi = LD; //vec3(0);
 
             float xi = wi.x;
             float yi = wi.y;
             float zi = wi.z;
 
-            float smith_wi = 0;
+            float smith_wi = smith(wi);
 
-            vec3 P = Li/(1 + smith_wo + smith_wi);
+            vec3 P = Li/(1.0 + smith_wo + smith_wi);
 
             float c;
 
@@ -418,7 +418,7 @@ void algo2(vec3 LD, vec3 LC)
 
             /* L_{20}.  Note that Y_{20} = 0.315392 (3z^2 - 1) */
             c = 0.315392 ;
-            Llm[L20] += c * (3*zi*zi - 1) * P;
+            Llm[L20] += c * (3*zi*zi - 1.0) * P;
 
             /* L_{22}.  Note that Y_{22} = 0.546274 (x^2 - y^2) */
             c = 0.546274 ;
@@ -429,7 +429,7 @@ void algo2(vec3 LD, vec3 LC)
 
     if (diffuseEnv) {
         for (int i = 0; i < 9; ++i) {
-            Llm[i] += shc_env[i] / (1 + smith_wo);
+            Llm[i] += shc_env[i] / (1 + smith_wo); // Problem here sometimes, seems to darken things way too much
         }
     }
 }
@@ -592,6 +592,35 @@ float G1_Beckmann_1D_Walter07(float alpha_b, float NdotV, float NdotN) {
 }
 
 
+vec3 blinn_phong_calc_internal(vec3 lightDir, vec3 lightColor, vec3 normal) {
+    float Id = clamp(dot(normal, lightDir), 0, 1);
+
+    vec3 viewDir = normalize(eyePosition - inData.position);
+    vec3 halfV = normalize(lightDir + viewDir);
+
+    float Is = 0;
+    if (Id > 0) {
+        Is = pow(clamp(dot(normal, halfV), 0, 1), shininess);
+    }
+
+    // Replace the 3 colors by light ambiant, diffuse and specular intensity respectively
+    float tmpAmbientFactor = 0.2;
+    return ka*lightColor*tmpAmbientFactor + (texture(texSampler, inData.texcoord).xyz + ks*Is) * lightColor*Id;
+}
+
+vec3 blinn_phong_calc(DirLight light, vec3 normal) {
+    vec3 lightDir = normalize(-light.direction);
+
+    return blinn_phong_calc_internal(lightDir, light.color, normal);
+}
+
+vec3 blinn_phong_calc(PointLight light, vec3 normal) {
+    vec3 lightDir = normalize(light.position - eyePosition);
+
+    return blinn_phong_calc_internal(lightDir, light.color, normal);
+}
+
+
 void main( void )
 {
     V = normalize(eyePosition - inData.position); // Initialize global V (view vector) for all further uses
@@ -610,7 +639,9 @@ void main( void )
     T = worldTangent;
     B = worldBitangent;
 
-    N = getMesoWorld();
+    vec3 mesoN = getMesoWorld();
+
+//    N = getMesoWorld();
 
 
     vec3 texAlbedo = texture(texSampler, inData.texcoord).xyz;
@@ -630,15 +661,15 @@ void main( void )
 
     vec3 C = vec3(0.72549019607, 0.94901960784, 1.0); // Diamond color
 
-    algo2(pointL, pointLight.color);
+    algo2(pointL, pointLight.color / 10.0);
 
 //    fragColor.xyz = vec3(D_beckmann(toTanSpace(H)));
 
-    float NdotH = dot(N, H);
-    float NdotV = dot(N, V);
+    float NdotH = dot(mesoN, H);
+    float NdotV = dot(mesoN, V);
     float VdotH = dot(V, H);
     float LdotH = dot(L, H);
-    float NdotL = dot(N, L);
+    float NdotL = dot(mesoN, L);
 
     float fr = 0;
 
@@ -656,7 +687,7 @@ void main( void )
         }
 
         if (diffuse) {
-            finalColor += 6.5 * roughDiffuse();
+            finalColor += 1.0 * roughDiffuse();
         }
     }
     else if (currentBRDF == 1) {
@@ -667,12 +698,12 @@ void main( void )
 //        float D_ = D_Beckmann_1D_Schlick94(alpha_b, NdotH);
         float G_ = G1_Beckmann_1D_Walter07(alpha_b, NdotV, NdotH) * G1_Beckmann_1D_Walter07(alpha_b, NdotL, NdotH);
 
-        fr = (F_ * D_ * G_) / (4 * abs(dot(N, L)) * abs(dot(N, V)));
+        fr = (F_ * D_ * G_) / (4 * abs(dot(mesoN, L)) * abs(dot(mesoN, V)));
 
         finalColor = vec3(fr) * clamp(NdotL, 0, 1);
     }
     else if (currentBRDF == 2) {
-
+        finalColor = blinn_phong_calc(pointLight, mesoN);
     }
     else {
 
@@ -685,4 +716,6 @@ void main( void )
 //    fragColor.xyz = E(getMesoWorld()) * albedo;
 
     fragColor = vec4(finalColor, 1);
+
+//    fragColor.xyz = vec3(disp);
 }

@@ -118,6 +118,8 @@ public:
 
     float roughnessOffset = 0;
     float fresnel0 = 0.05;
+
+    ScreenPass gradPass;
 };
 
 #endif // SCENETORENAME_H

@@ -36,13 +36,13 @@ arkMediatorWidget( mediator_shptr )
     QAction * load_irr_map_action = file_menu->addAction( tr( "&Load Irr Map" ) );
     
     QAction * standard_action = rendering_menu->addAction( tr( "&Standard" ) ,
-                                                           this, "setStandardRendering", QKeySequence(Qt::CTRL + Qt::Key_0));
+                                                           this, SLOT(setStandardRendering()), QKeySequence(Qt::CTRL + Qt::Key_0));
     QAction * normal_action = rendering_menu->addAction( tr( "&Normal" ) ,
-                                                           this, "setNormalRendering", QKeySequence(Qt::CTRL + Qt::Key_1));
+                                                           this, SLOT(setNormalRendering()), QKeySequence(Qt::CTRL + Qt::Key_1));
     QAction * texcoord_action = rendering_menu->addAction( tr( "&Texcoord" ) ,
-                                                           this, "setTexcoordRendering", QKeySequence(Qt::CTRL + Qt::Key_2));
+                                                           this, SLOT(setTexcoordRendering()), QKeySequence(Qt::CTRL + Qt::Key_2));
     QAction * wireframe_action = rendering_menu->addAction( tr( "&Wireframe" ) ,
-                                                            this, "setWireframeRendering", QKeySequence(Qt::CTRL + Qt::Key_F));
+                                                            this, SLOT(setWireframeRendering()), QKeySequence(Qt::CTRL + Qt::Key_F));
     QAction * depth_action = rendering_menu->addAction( tr( "&Depth" ) );
     
     
@@ -57,11 +57,11 @@ arkMediatorWidget( mediator_shptr )
     connect( load_env_action, SIGNAL( triggered() ), this, SLOT( loadEnvTexture() ) );
     connect( load_irr_map_action, SIGNAL( triggered() ), this, SLOT( loadIrradianceMap() ) );
 
-    connect( standard_action, SIGNAL( triggered() ), this, SLOT( setStandardRendering() ) );
-    connect( normal_action, SIGNAL( triggered() ), this, SLOT( setNormalRendering() ) );
-    connect( texcoord_action, SIGNAL( triggered() ), this, SLOT( setTexcoordRendering() ) );
-    connect( wireframe_action, SIGNAL( triggered() ), this, SLOT( setWireframeRendering() ) );
-    connect( depth_action, SIGNAL( triggered() ), this, SLOT( setDepthRendering() ) );
+//    connect( standard_action, SIGNAL( triggered() ), this, SLOT( setStandardRendering() ) );
+//    connect( normal_action, SIGNAL( triggered() ), this, SLOT( setNormalRendering() ) );
+//    connect( texcoord_action, SIGNAL( triggered() ), this, SLOT( setTexcoordRendering() ) );
+//    connect( wireframe_action, SIGNAL( triggered() ), this, SLOT( setWireframeRendering() ) );
+//    connect( depth_action, SIGNAL( triggered() ), this, SLOT( setDepthRendering() ) );
     
     addMenu( file_menu );
     addMenu( rendering_menu );

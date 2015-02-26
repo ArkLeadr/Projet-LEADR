@@ -12,7 +12,8 @@ Scene::Scene(int width, int height) :
     leadrScreenpass(m_width, m_height),
 	tessFactor(1),
     nbSample(1),
-    userDisplacementFactor(0)
+    userDisplacementFactor(0),
+    gradPass(m_width, m_height, "grad.frag")
 {
 }
 
@@ -74,14 +75,13 @@ void Scene::initScene() {
 
 //    printMatricesToGlslDeclaration(shc);
 
-//    importLeadrTextures("tex1", "tex2", leadr1, leadr2);
-//    importLeadrTextures("disp_data/wall002_hmap2_512x512.leadr1", "disp_data/wall002_hmap2_512x512.leadr2", leadr1, leadr2);
+    importLeadrTexture("disp_data/wall002_hmap2_512x512.leadr", leadr1, leadr2);
 
 //    importLeadrTextures("wgnoise.leadr1", "wgnoise.leadr2", leadr1, leadr2);
 //    importLeadrTextures("pillow/silk_bump.leadr1", "pillow/silk_bump.leadr2", leadr1, leadr2);
 //    importLeadrTextures("moon_sea.leadr1", "moon_sea.leadr2", leadr1, leadr2);
 
-    importLeadrTexture("pillow/silk_bump.leadr", leadr1, leadr2);
+//    importLeadrTexture("pillow/silk_bump.leadr", leadr1, leadr2);
 }
 
 void Scene::resize(int width, int height)
@@ -100,6 +100,8 @@ void Scene::resize(int width, int height)
     tonemapPass.resize(width, height);
 
     leadrScreenpass.resize(width, height);
+
+    gradPass.resize(width, height);
 
     std::cerr << "FBO shall be: " << width << " " << height << '\n';
 }
@@ -360,23 +362,31 @@ void Scene::renderLeadrQuadOnly()
     GL(glClearColor(0.f, 0.f, 0.f, 0)); // BLACK
     GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+    dogeMap.bindToTarget(GL_TEXTURE0);
+
+    gradPass.fire();
+
+
+    GL(glClear(GL_DEPTH_BUFFER_BIT));
 
     Shader& leadr_s = leadrScreenpass.getShader();
 
     /* Bind a shader */
     leadr_s.use();
 
+    GL(glUniform1i(glGetUniformLocation(leadr_s.getProgramId(), "diffuse"), diffuse));
+
     GL(glUniform1i(glGetUniformLocation(leadr_s.getProgramId(), "leadr1"), 4));
     GL(glUniform1i(glGetUniformLocation(leadr_s.getProgramId(), "leadr2"), 5));
-    leadr1.bindToTarget(GL_TEXTURE4);
+//    fbo->getTexture(1).bindToTarget(GL_TEXTURE4);
+    fbo->getTexture(2).bindToTarget(GL_TEXTURE4);
+//    leadr1.bindToTarget(GL_TEXTURE5);
     leadr2.bindToTarget(GL_TEXTURE5);
 
 
-    fbo->bind();
+//    fbo->bind();
 
     leadrScreenpass.fire();
-
-//    mainModel.drawAsPatch(projection, camera.getView(), cubeTransformation, &s);
 
     Shader::unbind();
 
